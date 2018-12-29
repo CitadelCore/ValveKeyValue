@@ -94,32 +94,10 @@ namespace ValveKeyValue.Deserialization
 
         void ReadObjectCore()
         {
-            var header = new string(reader.ReadChars(4));
-            if (header != "VBKV")
-                throw new KeyValueException("VBKV format was specified but got an invalid header.");
-            var checksum = reader.ReadUInt32();
-
-            // Verify the CRC32 checksum
-            using (var ms = new MemoryStream())
-            {
-                var pos = stream.Position;
-                stream.CopyTo(ms);
-                var array = ms.ToArray();
-
-                // compute the crc
-                var crc = Crc32Algorithm.Compute(array);
-                if (checksum != crc)
-                    throw new KeyValueException("Failed to validate the CRC32 checksum.");
-                stream.Seek(pos, SeekOrigin.Begin);
-            }
-        }
-
-        void ReadObjectCore()
-        {
             KV1BinaryNodeType type;
 
             // Keep reading values, until we reach the terminator
-            while ((type = ReadNextNodeType()) != KV1BinaryNodeType.End)
+            while ((type = ReadNextNodeType()) != _terminator)
             {
                 ReadValue(type);
             }
