@@ -2,12 +2,10 @@
 
 namespace ValveKeyValue.Abstraction
 {
-    interface IVisitationListener : IDisposable
+    internal interface IVisitationListener : IDisposable
     {
         void OnObjectStart(string name);
-
         void OnObjectEnd();
-
-        void OnKeyValuePair(string name, KVValue value);
+        void OnKeyValuePair(string name, KvValue value);
     }
 }

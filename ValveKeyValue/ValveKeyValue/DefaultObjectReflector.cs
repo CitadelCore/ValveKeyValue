@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ValveKeyValue
 {
-    sealed class DefaultObjectReflector : IObjectReflector
+    internal sealed class DefaultObjectReflector : IObjectReflector
     {
         IEnumerable<IObjectMember> IObjectReflector.GetMembers(object @object)
         {
@@ -12,11 +12,8 @@ namespace ValveKeyValue
 
             foreach (var property in properties)
             {
-                if (property.GetCustomAttribute<KVIgnoreAttribute>() != null)
-                {
+                if (property.GetCustomAttribute<KvIgnoreAttribute>() != null)
                     continue;
-                }
-
                 yield return new PropertyMember(property, @object);
             }
         }

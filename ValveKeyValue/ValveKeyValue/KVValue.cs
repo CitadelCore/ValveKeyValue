@@ -2,25 +2,23 @@
 
 namespace ValveKeyValue
 {
+    /// <inheritdoc />
     /// <summary>
     /// Container type for value of a KeyValues object.
     /// </summary>
-    public abstract partial class KVValue : IConvertible
+    public abstract partial class KvValue : IConvertible
     {
         /// <summary>
-        /// Gets the value type of this <see cref="KVValue"/>
+        /// Gets the value type of this <see cref="KvValue"/>
         /// </summary>
-        public abstract KVValueType ValueType { get; }
+        public abstract KvValueType ValueType { get; }
 
         /// <summary>
         /// Gets the child with the given key.
         /// </summary>
         /// <param name="key">The name of the child to locate.</param>
-        /// <returns>A <see cref="KVValue"/>, or <c>null</c>.</returns>
-        public virtual KVValue this[string key]
-        {
-            get { throw new NotSupportedException($"The indexer on a {nameof(KVValue)} can only be used on a {nameof(KVValue)} that has children."); }
-        }
+        /// <returns>A <see cref="KvValue"/>, or <c>null</c>.</returns>
+        public virtual KvValue this[string key] => throw new NotSupportedException($"The indexer on a {nameof(KvValue)} can only be used on a {nameof(KvValue)} that has children.");
 
         /// <inheritdoc/>
         public abstract TypeCode GetTypeCode();

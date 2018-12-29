@@ -2,8 +2,8 @@
 {
     interface IKVTextReader
     {
-        KVObject Read(string resourceName, KVSerializerOptions options = null);
+        KvObject Read(string resourceName, KvSerializerOptions options = null);
 
-        T Read<T>(string resourceName, KVSerializerOptions options = null);
+        T Read<T>(string resourceName, KvSerializerOptions options = null);
     }
 }

@@ -6,18 +6,19 @@ using System.Text;
 
 namespace ValveKeyValue
 {
+    /// <inheritdoc />
     /// <summary>
     /// Represents a dynamic KeyValue object.
     /// </summary>
-    [DebuggerDisplay("{DebuggerDescription}")]
-    public partial class KVObject
+    [DebuggerDisplay("{" + nameof(DebuggerDescription) + "}")]
+    public partial class KvObject
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="KVObject"/> class.
+        /// Initializes a new instance of the <see cref="KvObject"/> class.
         /// </summary>
         /// <param name="name">Name of this object.</param>
         /// <param name="value">Value of this object.</param>
-        public KVObject(string name, KVValue value)
+        public KvObject(string name, KvValue value)
         {
             Require.NotNull(name, nameof(name));
             Require.NotNull(value, nameof(value));
@@ -27,17 +28,17 @@ namespace ValveKeyValue
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KVObject"/> class.
+        /// Initializes a new instance of the <see cref="KvObject"/> class.
         /// </summary>
         /// <param name="name">Name of this object.</param>
         /// <param name="items">Child items of this object.</param>
-        public KVObject(string name, IEnumerable<KVObject> items)
+        public KvObject(string name, IEnumerable<KvObject> items)
         {
             Require.NotNull(name, nameof(name));
             Require.NotNull(items, nameof(items));
 
             Name = name;
-            var value = new KVCollectionValue();
+            var value = new KvCollectionValue();
             value.AddRange(items);
 
             Value = value;
@@ -51,14 +52,14 @@ namespace ValveKeyValue
         /// <summary>
         /// Gets the value of this object.
         /// </summary>
-        public KVValue Value { get; }
+        public KvValue Value { get; }
 
         /// <summary>
         /// Indexer to find a child item by name.
         /// </summary>
         /// <param name="key">Key of the child object to find</param>
-        /// <returns>A <see cref="KVObject"/> if the child item exists, otherwise <c>null</c>.</returns>
-        public KVValue this[string key]
+        /// <returns>A <see cref="KvObject"/> if the child item exists, otherwise <c>null</c>.</returns>
+        public KvValue this[string key]
         {
             get
             {
@@ -78,26 +79,26 @@ namespace ValveKeyValue
         }
 
         /// <summary>
-        /// Adds a <see cref="KVObject" /> as a child of the current object.
+        /// Adds a <see cref="KvObject" /> as a child of the current object.
         /// </summary>
         /// <param name="value">The child to add.</param>
-        public void Add(KVObject value)
+        public void Add(KvObject value)
         {
             Require.NotNull(value, nameof(value));
             GetCollectionValue().Add(value);
         }
 
         /// <summary>
-        /// Gets the children of this <see cref="KVObject"/>.
+        /// Gets the children of this <see cref="KvObject"/>.
         /// </summary>
-        public IEnumerable<KVObject> Children => (Value as KVCollectionValue) ?? Enumerable.Empty<KVObject>();
+        public IEnumerable<KvObject> Children => (Value as KvCollectionValue) ?? Enumerable.Empty<KvObject>();
 
-        KVCollectionValue GetCollectionValue()
+        KvCollectionValue GetCollectionValue()
         {
-            var collection = Value as KVCollectionValue;
+            var collection = Value as KvCollectionValue;
             if (collection == null)
             {
-                throw new InvalidOperationException($"This operation on a {nameof(KVObject)} can only be used when the value has children.");
+                throw new InvalidOperationException($"This operation on a {nameof(KvObject)} can only be used when the value has children.");
             }
 
             return collection;

@@ -11,14 +11,14 @@ namespace ValveKeyValue.Test
         [Test]
         public void SerializesToBinaryStructure()
         {
-            var first = new KVObject("FirstObject", new[]
+            var first = new KvObject("FirstObject", new[]
             {
-                new KVObject("firstkey", "firstvalue")
+                new KvObject("firstkey", "firstvalue")
             });
 
-            var second = new KVObject("SecondObject", new[]
+            var second = new KvObject("SecondObject", new[]
             {
-                new KVObject("secondkey", "secondvalue")
+                new KvObject("secondkey", "secondvalue")
             });
 
             var expectedData = new byte[]
@@ -42,8 +42,8 @@ namespace ValveKeyValue.Test
 
             using (var stream = new MemoryStream())
             {
-                KVSerializer.Create(KVSerializationFormat.KeyValues1Binary).Serialize(stream, first);
-                KVSerializer.Create(KVSerializationFormat.KeyValues1Binary).Serialize(stream, second);
+                KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Serialize(stream, first);
+                KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Serialize(stream, second);
                 Assert.That(stream.ToArray(), Is.EqualTo(expectedData));
             }
         }

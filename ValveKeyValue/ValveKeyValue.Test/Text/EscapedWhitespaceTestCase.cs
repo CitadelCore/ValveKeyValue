@@ -10,15 +10,15 @@ namespace ValveKeyValue.Test
             Assert.That((string)data["key"], Is.EqualTo("line1\nline2\tline2pt2"));
         }
 
-        KVObject data;
+        KvObject data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            var options = new KVSerializerOptions { HasEscapeSequences = true };
+            var options = new KvSerializerOptions { HasEscapeSequences = true };
             using (var stream = TestDataHelper.OpenResource("Text.escaped_whitespace.vdf"))
             {
-                data = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream, options);
+                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream, options);
             }
         }
     }

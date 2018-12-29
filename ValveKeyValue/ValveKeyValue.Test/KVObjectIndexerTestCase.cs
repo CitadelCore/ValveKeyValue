@@ -24,18 +24,18 @@ namespace ValveKeyValue.Test
                 .With.Message.EqualTo("The indexer on a KVValue can only be used on a KVValue that has children."));
         }
 
-        KVObject data;
+        KvObject data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            data = new KVObject(
+            data = new KvObject(
                 "test data",
                 new[]
                 {
-                    new KVObject("foo", "bar"),
-                    new KVObject("bar", "baz"),
-                    new KVObject("baz", "-"),
+                    new KvObject("foo", "bar"),
+                    new KvObject("bar", "baz"),
+                    new KvObject("baz", "-"),
                 });
         }
     }

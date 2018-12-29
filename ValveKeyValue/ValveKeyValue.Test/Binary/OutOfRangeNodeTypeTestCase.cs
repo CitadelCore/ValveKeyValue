@@ -20,7 +20,7 @@ namespace ValveKeyValue.Test
             };
 
             Assert.That(
-                () => KVSerializer.Create(KVSerializationFormat.KeyValues1Binary).Deserialize(data),
+                () => KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize(data),
                 Throws.Exception.InstanceOf<KeyValueException>().With.InnerException.TypeOf<ArgumentOutOfRangeException>());
         }
     }

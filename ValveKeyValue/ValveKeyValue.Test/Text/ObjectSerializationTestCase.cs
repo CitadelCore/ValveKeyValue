@@ -29,7 +29,7 @@ namespace ValveKeyValue.Test
             string text;
             using (var ms = new MemoryStream())
             {
-                KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Serialize(ms, dataObject, "test data");
+                KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Serialize(ms, dataObject, "test data");
 
                 ms.Seek(0, SeekOrigin.Begin);
                 using (var reader = new StreamReader(ms))
@@ -48,10 +48,10 @@ namespace ValveKeyValue.Test
 
             public string Developer { get; set; }
 
-            [KVProperty("description")]
+            [KvProperty("description")]
             public string Summary { get; set; }
 
-            [KVIgnore]
+            [KvIgnore]
             public string ExtraData { get; set; }
         }
     }

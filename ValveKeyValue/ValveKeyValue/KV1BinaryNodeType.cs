@@ -1,6 +1,6 @@
 ﻿namespace ValveKeyValue
 {
-    enum KV1BinaryNodeType : byte
+    internal enum Kv1BinaryNodeType : byte
     {
         ChildObject = 0,
         String = 1,

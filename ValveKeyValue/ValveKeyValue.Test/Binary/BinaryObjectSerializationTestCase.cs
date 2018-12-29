@@ -9,15 +9,15 @@ namespace ValveKeyValue.Test
         [Test]
         public void SerializesToBinaryStructure()
         {
-            var kvo = new KVObject("TestObject", new[]
+            var kvo = new KvObject("TestObject", new[]
             {
-                new KVObject("key", "value"),
-                new KVObject("key_utf8", "邪恶的战"), 
-                new KVObject("int", 0x10203040),
-                new KVObject("flt", 1234.5678f),
-                new KVObject("ptr", new IntPtr(0x12345678)),
-                new KVObject("lng", 0x8877665544332211u),
-                new KVObject("i64", 0x0102030405060708)
+                new KvObject("key", "value"),
+                new KvObject("key_utf8", "邪恶的战"), 
+                new KvObject("int", 0x10203040),
+                new KvObject("flt", 1234.5678f),
+                new KvObject("ptr", new IntPtr(0x12345678)),
+                new KvObject("lng", 0x8877665544332211u),
+                new KvObject("i64", 0x0102030405060708)
             });
 
             var expectedData = new byte[]
@@ -51,7 +51,7 @@ namespace ValveKeyValue.Test
 
             using (var ms = new MemoryStream())
             {
-                KVSerializer.Create(KVSerializationFormat.KeyValues1Binary).Serialize(ms, kvo);
+                KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Serialize(ms, kvo);
 
                 Assert.That(ms.ToArray(), Is.EqualTo(expectedData));
             }

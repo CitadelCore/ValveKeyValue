@@ -27,16 +27,16 @@ namespace ValveKeyValue.Test
             Assert.That(actualValue, Is.EqualTo(expectedValue), key);
         }
 
-        KVObject data;
+        KvObject data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            var options = new KVSerializerOptions { FileLoader = new StubIncludedFileLoader() };
+            var options = new KvSerializerOptions { FileLoader = new StubIncludedFileLoader() };
 
             using (var stream = TestDataHelper.OpenResource("Text.kv_with_base.vdf"))
             {
-                data = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream, options);
+                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream, options);
             }
         }
 

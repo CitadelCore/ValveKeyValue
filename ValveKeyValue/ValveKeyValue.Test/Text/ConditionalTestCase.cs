@@ -86,7 +86,7 @@ namespace ValveKeyValue.Test
         {
             var data = ParseResource("Text.conditional_in_key.vdf");
             Assert.That(data, Is.Not.Null);
-            Assert.That(data.Value.ValueType, Is.EqualTo(KVValueType.Collection));
+            Assert.That(data.Value.ValueType, Is.EqualTo(KvValueType.Collection));
 
             var children = data.Children.ToArray();
             Assert.That(children, Has.Length.EqualTo(1));
@@ -94,15 +94,15 @@ namespace ValveKeyValue.Test
             Assert.That((string)children[0].Value, Is.EqualTo("windows 32-bit"));
         }
 
-        static KVObject ParseResource(string name)
+        static KvObject ParseResource(string name)
             => ParseResource(name, new string[0]);
 
-        static KVObject ParseResource(string name, string[] conditions)
+        static KvObject ParseResource(string name, string[] conditions)
         {
-            KVObject data;
+            KvObject data;
             using (var stream = TestDataHelper.OpenResource(name))
             {
-                data = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream, new KVSerializerOptions { Conditions = conditions });
+                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream, new KvSerializerOptions { Conditions = conditions });
             }
 
             return data;

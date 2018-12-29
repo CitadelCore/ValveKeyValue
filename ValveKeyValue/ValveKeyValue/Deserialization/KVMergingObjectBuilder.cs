@@ -2,28 +2,27 @@
 
 namespace ValveKeyValue.Deserialization
 {
-    sealed class KVMergingObjectBuilder : KVObjectBuilder
+    internal sealed class KvMergingObjectBuilder : KvObjectBuilder
     {
-        public KVMergingObjectBuilder(KVObjectBuilder originalBuilder)
+        public KvMergingObjectBuilder(KvObjectBuilder originalBuilder)
         {
             Require.NotNull(originalBuilder, nameof(originalBuilder));
-
-            this.originalBuilder = originalBuilder;
+            _originalBuilder = originalBuilder;
         }
 
-        readonly KVObjectBuilder originalBuilder;
+        private readonly KvObjectBuilder _originalBuilder;
 
         protected override void FinalizeState()
         {
             base.FinalizeState();
 
             var stateEntry = StateStack.Peek();
-            var originalStateEntry = originalBuilder.StateStack.Peek();
+            var originalStateEntry = _originalBuilder.StateStack.Peek();
 
-            Merge(from: stateEntry, into: originalStateEntry);
+            Merge(stateEntry, originalStateEntry);
         }
 
-        static void Merge(KVPartialState from, KVPartialState into)
+        private static void Merge(KvPartialState from, KvPartialState into)
         {
             foreach (var item in from.Items)
             {
@@ -34,23 +33,23 @@ namespace ValveKeyValue.Deserialization
                 }
                 else
                 {
-                    Merge(from: item, into: matchingItem);
+                    Merge(item, matchingItem);
                 }
             }
         }
 
-        static void Merge(KVObject from, KVObject into)
+        private static void Merge(KvObject from, KvObject into)
         {
             foreach (var child in from)
             {
                 var matchingChild = into.Children.FirstOrDefault(c => c.Name == child.Name);
-                if (matchingChild == null && into.Value.ValueType == KVValueType.Collection)
+                if (matchingChild == null && into.Value.ValueType == KvValueType.Collection)
                 {
                     into.Add(child);
                 }
                 else
                 {
-                    Merge(from: child, into: matchingChild);
+                    Merge(child, matchingChild);
                 }
             }
         }

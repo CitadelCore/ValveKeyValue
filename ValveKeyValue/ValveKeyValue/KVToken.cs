@@ -1,20 +1,14 @@
 ﻿namespace ValveKeyValue
 {
-    class KVToken
+    internal class KvToken
     {
-        public KVToken(KVTokenType type)
-            : this(type, null)
-        {
-        }
-
-        public KVToken(KVTokenType type, string value)
+        public KvToken(KvTokenType type, string value = null)
         {
             TokenType = type;
             Value = value;
         }
 
-        public KVTokenType TokenType { get; }
-
+        public KvTokenType TokenType { get; }
         public string Value { get; }
     }
 }

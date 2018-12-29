@@ -8,10 +8,10 @@ namespace ValveKeyValue.Test
         [Test]
         public void ReadsRawValueWhenNotHasEscapeSequences()
         {
-            KVObject data;
+            KvObject data;
             using (var stream = TestDataHelper.OpenResource("Text.escaped_garbage.vdf"))
             {
-                data = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream);
+                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream);
             }
 
             Assert.That((string)data["key"], Is.EqualTo(@"\7"));
@@ -20,11 +20,11 @@ namespace ValveKeyValue.Test
         [Test]
         public void ThrowsExceptionWhenHasEscapeSequences()
         {
-            var options = new KVSerializerOptions { HasEscapeSequences = true };
+            var options = new KvSerializerOptions { HasEscapeSequences = true };
             using (var stream = TestDataHelper.OpenResource("Text.escaped_garbage.vdf"))
             {
                 Assert.That(
-                    () => KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream, options),
+                    () => KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream, options),
                     Throws.Exception.TypeOf<KeyValueException>()
                     .With.InnerException.TypeOf<InvalidDataException>()
                     .With.Message.EqualTo(@"Unknown escaped character '\7'."));

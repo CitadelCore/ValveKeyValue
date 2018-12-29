@@ -2,7 +2,7 @@
 
 namespace ValveKeyValue
 {
-    interface IObjectReflector
+    internal interface IObjectReflector
     {
         IEnumerable<IObjectMember> GetMembers(object @object);
     }

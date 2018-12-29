@@ -10,14 +10,14 @@ namespace ValveKeyValue.Test
             Assert.That((string)data["edge case"], Is.EqualTo(@"this is \"" quite fun"));
         }
 
-        KVObject data;
+        KvObject data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             using (var stream = TestDataHelper.OpenResource("Text.escaped_backslash_not_special.vdf"))
             {
-                data = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream);
+                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream);
             }
         }
     }

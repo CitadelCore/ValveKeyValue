@@ -24,14 +24,14 @@ namespace ValveKeyValue.Test
 
         string PerformNewLineTest(string value, bool hasEscapeSequences)
         {
-            KVObject convertedKv;
-            var kv = new KVObject("newLineTestCase", value);
-            var options = new KVSerializerOptions { HasEscapeSequences = hasEscapeSequences };
+            KvObject convertedKv;
+            var kv = new KvObject("newLineTestCase", value);
+            var options = new KvSerializerOptions { HasEscapeSequences = hasEscapeSequences };
 
             string text;
             using (var ms = new MemoryStream())
             {
-                var serializer = KVSerializer.Create(KVSerializationFormat.KeyValues1Text);
+                var serializer = KvSerializer.Create(KvSerializationFormat.KeyValues1Text);
 
                 serializer.Serialize(ms, kv, options);
 

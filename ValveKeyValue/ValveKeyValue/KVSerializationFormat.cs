@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents the type of (de)serialization to use.
     /// </summary>
-    public enum KVSerializationFormat
+    public enum KvSerializationFormat
     {
         /// <summary>
         /// KeyValues 1 textual format. Used often in Steam and the Source engine.

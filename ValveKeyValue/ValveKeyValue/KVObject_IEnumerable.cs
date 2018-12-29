@@ -4,13 +4,14 @@ using System.Linq;
 
 namespace ValveKeyValue
 {
+    /// <inheritdoc />
     /// <summary>
     /// Represents a dynamic KeyValue object.
     /// </summary>
-    public partial class KVObject : IEnumerable<KVObject>
+    public partial class KvObject : IEnumerable<KvObject>
     {
         /// <inheritdoc/>
-        public IEnumerator<KVObject> GetEnumerator()
+        public IEnumerator<KvObject> GetEnumerator()
             => Children.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()

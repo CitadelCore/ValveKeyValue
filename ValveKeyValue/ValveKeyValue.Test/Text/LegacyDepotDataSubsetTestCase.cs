@@ -77,7 +77,7 @@ namespace ValveKeyValue.Test
             }
         }
 
-        KVObject data;
+        KvObject data;
 
         [OneTimeSetUp]
         public void SetUp()

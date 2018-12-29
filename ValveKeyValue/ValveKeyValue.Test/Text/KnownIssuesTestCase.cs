@@ -12,7 +12,7 @@ namespace ValveKeyValue.Test
 
             using (var stream = TestDataHelper.OpenResource("Text.vrf_settings_sample.vdf"))
             {
-                config = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize<VKVConfig>(stream);
+                config = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<VKVConfig>(stream);
             }
 
             Assert.That(config, Is.Not.Null);

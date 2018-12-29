@@ -3,17 +3,17 @@
     /// <summary>
     /// Options to use when deserializing a KeyValues file.
     /// </summary>
-    public sealed class KVSerializerOptions
+    public sealed class KvSerializerOptions
     {
-        string[] conditions;
+        private string[] _conditions;
 
         /// <summary>
         /// Gets or sets a list of conditions to use to match conditional values.
         /// </summary>
         public string[] Conditions
         {
-            get { return conditions ?? new string[0]; }
-            set { conditions = value; }
+            get => _conditions ?? new string[0];
+            set => _conditions = value;
         }
 
         /// <summary>
@@ -35,6 +35,6 @@
         /// <summary>
         /// Gets the default options (used when none are specified).
         /// </summary>
-        public static KVSerializerOptions DefaultOptions => new KVSerializerOptions();
+        public static KvSerializerOptions DefaultOptions => new KvSerializerOptions();
     }
 }

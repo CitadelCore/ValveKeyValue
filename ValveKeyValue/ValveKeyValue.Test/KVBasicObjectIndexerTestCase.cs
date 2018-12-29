@@ -14,12 +14,12 @@ namespace ValveKeyValue.Test
                 .With.Message.EqualTo("This operation on a KVObject can only be used when the value has children."));
         }
 
-        KVObject data;
+        KvObject data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            data = new KVObject("foo", "bar");
+            data = new KvObject("foo", "bar");
         }
     }
 }

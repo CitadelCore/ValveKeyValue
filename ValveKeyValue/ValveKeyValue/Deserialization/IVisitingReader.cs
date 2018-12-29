@@ -2,7 +2,7 @@
 
 namespace ValveKeyValue.Deserialization
 {
-    interface IVisitingReader : IDisposable
+    internal interface IVisitingReader : IDisposable
     {
         void ReadObject();
     }

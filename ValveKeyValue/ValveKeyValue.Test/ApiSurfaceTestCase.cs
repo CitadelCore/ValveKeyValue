@@ -13,7 +13,7 @@ namespace ValveKeyValue.Test
         public void ApiSurfaceIsWellKnown()
         {
             var expected = TestDataHelper.ReadTextResource("apisurface.txt");
-            var actual = GenerateApiSurface(typeof(KVObject).GetTypeInfo().Assembly);
+            var actual = GenerateApiSurface(typeof(KvObject).GetTypeInfo().Assembly);
 
             Assert.That(actual, Is.EqualTo(expected), "This may indicate a breaking change.");
         }

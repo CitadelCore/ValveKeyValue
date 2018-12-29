@@ -4,41 +4,36 @@ using ValveKeyValue.Abstraction;
 
 namespace ValveKeyValue.Deserialization
 {
-    class KVObjectBuilder : IParsingVisitationListener
+    internal class KvObjectBuilder : IParsingVisitationListener
     {
-        readonly IList<KVObjectBuilder> associatedBuilders = new List<KVObjectBuilder>();
+        private readonly IList<KvObjectBuilder> _associatedBuilders = new List<KvObjectBuilder>();
 
-        public KVObject GetObject()
+        public KvObject GetObject()
         {
-            if (stateStack.Count != 1)
+            if (StateStack.Count != 1)
             {
                 throw new KeyValueException("Builder is not in a fully completed state.");
             }
 
-            foreach (var associatedBuilder in associatedBuilders)
+            foreach (var associatedBuilder in _associatedBuilders)
             {
                 associatedBuilder.FinalizeState();
             }
 
-            var state = stateStack.Peek();
+            var state = StateStack.Peek();
             return MakeObject(state);
         }
 
-        readonly Stack<KVPartialState> stateStack = new Stack<KVPartialState>();
-
-        public void OnKeyValuePair(string name, KVValue value)
+        public void OnKeyValuePair(string name, KvValue value)
         {
             if (StateStack.Count > 0)
             {
                 var state = StateStack.Peek();
-                state.Items.Add(new KVObject(name, value));
+                state.Items.Add(new KvObject(name, value));
             }
             else
             {
-                var state = new KVPartialState();
-                state.Key = name;
-                state.Value = value;
-
+                var state = new KvPartialState {Key = name, Value = value};
                 StateStack.Push(state);
             }
         }
@@ -46,12 +41,9 @@ namespace ValveKeyValue.Deserialization
         public void OnObjectEnd()
         {
             if (StateStack.Count <= 1)
-            {
                 return;
-            }
 
             var state = StateStack.Pop();
-
             var completedObject = MakeObject(state);
 
             var parentState = StateStack.Peek();
@@ -73,54 +65,35 @@ namespace ValveKeyValue.Deserialization
 
         public void OnObjectStart(string name)
         {
-            var state = new KVPartialState();
-            state.Key = name;
+            var state = new KvPartialState {Key = name};
             StateStack.Push(state);
         }
 
         public IParsingVisitationListener GetMergeListener()
         {
-            var builder = new KVMergingObjectBuilder(this);
-            associatedBuilders.Add(builder);
+            var builder = new KvMergingObjectBuilder(this);
+            _associatedBuilders.Add(builder);
             return builder;
         }
 
         public IParsingVisitationListener GetAppendListener()
         {
-            var builder = new KVAppendingObjectBuilder(this);
-            associatedBuilders.Add(builder);
+            var builder = new KvAppendingObjectBuilder(this);
+            _associatedBuilders.Add(builder);
             return builder;
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
-        internal Stack<KVPartialState> StateStack => stateStack;
+        internal Stack<KvPartialState> StateStack { get; } = new Stack<KvPartialState>();
 
-        protected virtual void FinalizeState()
-        {
-        }
+        protected virtual void FinalizeState() { }
 
-        KVObject MakeObject(KVPartialState state)
+        private static KvObject MakeObject(KvPartialState state)
         {
             if (state.Discard)
-            {
                 return null;
-            }
-
-            KVObject @object;
-
-            if (state.Value != null)
-            {
-                @object = new KVObject(state.Key, state.Value);
-            }
-            else
-            {
-                @object = new KVObject(state.Key, state.Items);
-            }
-
-            return @object;
+            return state.Value != null ? new KvObject(state.Key, state.Value) : new KvObject(state.Key, state.Items);
         }
     }
 }

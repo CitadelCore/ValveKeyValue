@@ -16,7 +16,7 @@ namespace ValveKeyValue.Test
 
         [Test]
         public void IsObjectWithChildren()
-            => Assert.That(obj.Value.ValueType, Is.EqualTo(KVValueType.Collection));
+            => Assert.That(obj.Value.ValueType, Is.EqualTo(KvValueType.Collection));
 
         [TestCase(ExpectedResult = 7)]
         public int HasChildren()
@@ -34,7 +34,7 @@ namespace ValveKeyValue.Test
             Assert.That(Convert.ChangeType(obj[name], valueType), Is.EqualTo(value));
         }
 
-        KVObject obj;
+        KvObject obj;
 
         [OneTimeSetUp]
         public void SetUp()
@@ -67,7 +67,7 @@ namespace ValveKeyValue.Test
                     0x08, // end object
                 0x08, // end document
             };
-            obj = KVSerializer.Create(KVSerializationFormat.KeyValues1Binary).Deserialize(data);
+            obj = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize(data);
         }
     }
 }

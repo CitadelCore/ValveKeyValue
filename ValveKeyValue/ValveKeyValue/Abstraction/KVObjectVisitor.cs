@@ -3,39 +3,38 @@ using System.Collections.Generic;
 
 namespace ValveKeyValue.Abstraction
 {
-    sealed class KVObjectVisitor
+    internal sealed class KvObjectVisitor
     {
-        public KVObjectVisitor(IVisitationListener listener)
+        public KvObjectVisitor(IVisitationListener listener)
         {
             Require.NotNull(listener, nameof(listener));
-
-            this.listener = listener;
+            _listener = listener;
         }
 
-        readonly IVisitationListener listener;
+        private readonly IVisitationListener _listener;
 
-        public void Visit(KVObject @object)
+        public void Visit(KvObject @object)
         {
             VisitObject(@object.Name, @object.Value);
         }
 
-        void VisitObject(string name, KVValue value)
+        private void VisitObject(string name, KvValue value)
         {
             switch (value.ValueType)
             {
-                case KVValueType.Collection:
-                    listener.OnObjectStart(name);
-                    VisitValue((IEnumerable<KVObject>)value);
-                    listener.OnObjectEnd();
+                case KvValueType.Collection:
+                    _listener.OnObjectStart(name);
+                    VisitValue((IEnumerable<KvObject>)value);
+                    _listener.OnObjectEnd();
                     break;
 
-                case KVValueType.FloatingPoint:
-                case KVValueType.Int32:
-                case KVValueType.Pointer:
-                case KVValueType.String:
-                case KVValueType.UInt64:
-                case KVValueType.Int64:
-                    listener.OnKeyValuePair(name, value);
+                case KvValueType.FloatingPoint:
+                case KvValueType.Int32:
+                case KvValueType.Pointer:
+                case KvValueType.String:
+                case KvValueType.UInt64:
+                case KvValueType.Int64:
+                    _listener.OnKeyValuePair(name, value);
                     break;
 
                 default:
@@ -43,7 +42,7 @@ namespace ValveKeyValue.Abstraction
             }
         }
 
-        void VisitValue(IEnumerable<KVObject> collection)
+        private void VisitValue(IEnumerable<KvObject> collection)
         {
             foreach (var item in collection)
             {

@@ -27,14 +27,14 @@ namespace ValveKeyValue.Test
         [TestCase("Key3", ExpectedResult = "Value3")]
         public string UnquotedChildValue(string key) => (string)data["UnquotedChild"][key];
 
-        KVObject data;
+        KvObject data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             using (var stream = TestDataHelper.OpenResource("Text.unquoted_document.vdf"))
             {
-                data = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream);
+                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream);
             }
         }
     }

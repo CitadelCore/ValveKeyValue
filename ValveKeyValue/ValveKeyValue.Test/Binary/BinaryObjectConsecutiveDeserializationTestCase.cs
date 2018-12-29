@@ -42,22 +42,22 @@ namespace ValveKeyValue.Test
             {
                 stream.Write(data, 0, data.Length);
                 stream.Seek(0, SeekOrigin.Begin);
-                _firstObject = KVSerializer.Create(KVSerializationFormat.KeyValues1Binary).Deserialize<FirstObject>(stream);
+                _firstObject = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize<FirstObject>(stream);
                 Assert.That(stream.Position, Is.EqualTo(36)); // ensure we read exactly 36 bytes
-                _secondObject = KVSerializer.Create(KVSerializationFormat.KeyValues1Binary).Deserialize<SecondObject>(stream);
+                _secondObject = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize<SecondObject>(stream);
                 Assert.That(stream.Position, Is.EqualTo(75)); // ensure we read exactly 39 bytes
             }
         }
 
         class FirstObject
         {
-            [KVProperty("firstkey")]
+            [KvProperty("firstkey")]
             public string StringValue { get; set; }
         }
 
         class SecondObject
         {
-            [KVProperty("secondkey")]
+            [KvProperty("secondkey")]
             public string StringValue { get; set; }
         }
     }

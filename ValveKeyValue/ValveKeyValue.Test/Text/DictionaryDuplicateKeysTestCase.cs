@@ -30,7 +30,7 @@ namespace ValveKeyValue.Test
         {
             using (var stream = TestDataHelper.OpenResource("Text.duplicate_keys.vdf"))
             {
-                data = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize<Dictionary<string, string>>(stream);
+                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<Dictionary<string, string>>(stream);
             }
         }
     }

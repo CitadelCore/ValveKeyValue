@@ -7,10 +7,10 @@ namespace ValveKeyValue.Test
         [Test]
         public void CanReadTeamFortressCleanupCommands()
         {
-            KVObject data;
+            KvObject data;
             using (var stream = TestDataHelper.OpenResource($"Text.steam_440.vdf"))
             {
-                data = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream);
+                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream);
             }
 
             var cleanupcmds = (string)data["config"]["cleanupcmds"];

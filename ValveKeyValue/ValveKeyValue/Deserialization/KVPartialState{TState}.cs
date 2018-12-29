@@ -2,7 +2,7 @@
 
 namespace ValveKeyValue.Deserialization
 {
-    class KVPartialState<TState> : KVPartialState
+    internal class KvPartialState<TState> : KvPartialState
     {
         public Stack<TState> States { get; } = new Stack<TState>();
     }

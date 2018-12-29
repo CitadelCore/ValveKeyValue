@@ -35,19 +35,19 @@ namespace ValveKeyValue.Test
         {
             using (var stream = TestDataHelper.OpenResource("Text.object_person_attributes.vdf"))
             {
-                person = KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize<Person>(stream);
+                person = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<Person>(stream);
             }
         }
 
         class Person
         {
-            [KVProperty("First Name")]
+            [KvProperty("First Name")]
             public string FirstName { get; set; }
 
-            [KVIgnore]
+            [KvIgnore]
             public string LastName { get; set; }
 
-            [KVProperty("Can Fix It")]
+            [KvProperty("Can Fix It")]
             public bool CanFixIt { get; set; }
         }
     }

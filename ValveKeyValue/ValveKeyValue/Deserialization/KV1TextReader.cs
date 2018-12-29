@@ -5,41 +5,41 @@ using ValveKeyValue.Abstraction;
 
 namespace ValveKeyValue.Deserialization
 {
-    sealed class KV1TextReader : IVisitingReader
+    internal sealed class Kv1TextReader : IVisitingReader
     {
-        public KV1TextReader(TextReader textReader, IParsingVisitationListener listener, KVSerializerOptions options)
+        public Kv1TextReader(TextReader textReader, IParsingVisitationListener listener, KvSerializerOptions options)
         {
             Require.NotNull(textReader, nameof(textReader));
             Require.NotNull(listener, nameof(listener));
             Require.NotNull(options, nameof(options));
 
-            this.listener = listener;
-            this.options = options;
+            _listener = listener;
+            _options = options;
 
-            conditionEvaluator = new KVConditionEvaluator(options.Conditions);
-            tokenReader = new KV1TokenReader(textReader, options);
-            stateMachine = new KV1TextReaderStateMachine();
+            _conditionEvaluator = new KvConditionEvaluator(options.Conditions);
+            _tokenReader = new Kv1TokenReader(textReader, options);
+            _stateMachine = new Kv1TextReaderStateMachine();
         }
 
-        readonly IParsingVisitationListener listener;
-        readonly KVSerializerOptions options;
+        private readonly IParsingVisitationListener _listener;
+        private readonly KvSerializerOptions _options;
 
-        readonly KVConditionEvaluator conditionEvaluator;
-        readonly KV1TokenReader tokenReader;
-        readonly KV1TextReaderStateMachine stateMachine;
-        bool disposed;
+        private readonly KvConditionEvaluator _conditionEvaluator;
+        private readonly Kv1TokenReader _tokenReader;
+        private readonly Kv1TextReaderStateMachine _stateMachine;
+        private bool _disposed;
 
         public void ReadObject()
         {
-            Require.NotDisposed(nameof(KV1TextReader), disposed);
+            Require.NotDisposed(nameof(Kv1TextReader), _disposed);
 
-            while (stateMachine.IsInObject)
+            while (_stateMachine.IsInObject)
             {
-                KVToken token;
+                KvToken token;
 
                 try
                 {
-                    token = tokenReader.ReadNextToken();
+                    token = _tokenReader.ReadNextToken();
                 }
                 catch (InvalidDataException ex)
                 {
@@ -52,23 +52,23 @@ namespace ValveKeyValue.Deserialization
 
                 switch (token.TokenType)
                 {
-                    case KVTokenType.String:
+                    case KvTokenType.String:
                         ReadText(token.Value);
                         break;
 
-                    case KVTokenType.ObjectStart:
+                    case KvTokenType.ObjectStart:
                         BeginNewObject();
                         break;
 
-                    case KVTokenType.ObjectEnd:
-                        FinalizeCurrentObject(@explicit: true);
+                    case KvTokenType.ObjectEnd:
+                        FinalizeCurrentObject(true);
                         break;
 
-                    case KVTokenType.Condition:
+                    case KvTokenType.Condition:
                         HandleCondition(token.Value);
                         break;
 
-                    case KVTokenType.EndOfFile:
+                    case KvTokenType.EndOfFile:
                         try
                         {
                             FinalizeDocument();
@@ -80,25 +80,25 @@ namespace ValveKeyValue.Deserialization
 
                         break;
 
-                    case KVTokenType.Comment:
+                    case KvTokenType.Comment:
                         break;
 
-                    case KVTokenType.IncludeAndMerge:
-                        if (!stateMachine.IsAtStart)
+                    case KvTokenType.IncludeAndMerge:
+                        if (!_stateMachine.IsAtStart)
                         {
                             throw new KeyValueException("Inclusions are only valid at the beginning of a file.");
                         }
 
-                        stateMachine.AddItemForMerging(token.Value);
+                        _stateMachine.AddItemForMerging(token.Value);
                         break;
 
-                    case KVTokenType.IncludeAndAppend:
-                        if (!stateMachine.IsAtStart)
+                    case KvTokenType.IncludeAndAppend:
+                        if (!_stateMachine.IsAtStart)
                         {
                             throw new KeyValueException("Inclusions are only valid at the beginning of a file.");
                         }
 
-                        stateMachine.AddItemForAppending(token.Value);
+                        _stateMachine.AddItemForAppending(token.Value);
                         break;
 
                     default:
@@ -109,34 +109,33 @@ namespace ValveKeyValue.Deserialization
 
         public void Dispose()
         {
-            if (!disposed)
-            {
-                tokenReader.Dispose();
-                disposed = true;
-            }
+            if (_disposed) return;
+
+            _tokenReader.Dispose();
+            _disposed = true;
         }
 
-        void ReadText(string text)
+        private void ReadText(string text)
         {
-            switch (stateMachine.Current)
+            switch (_stateMachine.Current)
             {
                 // If we're after a value when we find more text, then we must be starting a new key/value pair.
-                case KV1TextReaderState.InObjectAfterValue:
+                case Kv1TextReaderState.InObjectAfterValue:
                     FinalizeCurrentObject(@explicit: false);
-                    stateMachine.PushObject();
+                    _stateMachine.PushObject();
                     SetObjectKey(text);
                     break;
 
-                case KV1TextReaderState.InObjectBeforeKey:
+                case Kv1TextReaderState.InObjectBeforeKey:
                     SetObjectKey(text);
                     break;
 
-                case KV1TextReaderState.InObjectBetweenKeyAndValue:
+                case Kv1TextReaderState.InObjectBetweenKeyAndValue:
                     var value = ParseValue(text);
-                    var name = stateMachine.CurrentName;
-                    listener.OnKeyValuePair(name, value);
+                    var name = _stateMachine.CurrentName;
+                    _listener.OnKeyValuePair(name, value);
 
-                    stateMachine.Push(KV1TextReaderState.InObjectAfterValue);
+                    _stateMachine.Push(Kv1TextReaderState.InObjectAfterValue);
                     break;
 
                 default:
@@ -144,121 +143,120 @@ namespace ValveKeyValue.Deserialization
             }
         }
 
-        void SetObjectKey(string name)
+        private void SetObjectKey(string name)
         {
-            stateMachine.SetName(name);
-            stateMachine.Push(KV1TextReaderState.InObjectBetweenKeyAndValue);
+            _stateMachine.SetName(name);
+            _stateMachine.Push(Kv1TextReaderState.InObjectBetweenKeyAndValue);
         }
 
-        void BeginNewObject()
+        private void BeginNewObject()
         {
-            if (stateMachine.Current != KV1TextReaderState.InObjectBetweenKeyAndValue)
+            if (_stateMachine.Current != Kv1TextReaderState.InObjectBetweenKeyAndValue)
             {
                 throw new InvalidOperationException();
             }
 
-            listener.OnObjectStart(stateMachine.CurrentName);
+            _listener.OnObjectStart(_stateMachine.CurrentName);
 
-            stateMachine.PushObject();
-            stateMachine.Push(KV1TextReaderState.InObjectBeforeKey);
+            _stateMachine.PushObject();
+            _stateMachine.Push(Kv1TextReaderState.InObjectBeforeKey);
         }
 
-        void FinalizeCurrentObject(bool @explicit)
+        private void FinalizeCurrentObject(bool @explicit)
         {
-            if (stateMachine.Current != KV1TextReaderState.InObjectBeforeKey && stateMachine.Current != KV1TextReaderState.InObjectAfterValue)
+            if (_stateMachine.Current != Kv1TextReaderState.InObjectBeforeKey && _stateMachine.Current != Kv1TextReaderState.InObjectAfterValue)
             {
                 throw new InvalidOperationException(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "Attempted to finalize object while in state {0}.",
-                        stateMachine.Current));
+                        _stateMachine.Current));
             }
 
-            bool discard;
-            stateMachine.PopObject(out discard);
+            _stateMachine.PopObject(out var discard);
 
-            if (stateMachine.IsInObject)
+            if (_stateMachine.IsInObject)
             {
-                stateMachine.Push(KV1TextReaderState.InObjectAfterValue);
+                _stateMachine.Push(Kv1TextReaderState.InObjectAfterValue);
             }
 
             if (discard)
             {
-                listener.DiscardCurrentObject();
+                _listener.DiscardCurrentObject();
             }
             else if (@explicit)
             {
-                listener.OnObjectEnd();
+                _listener.OnObjectEnd();
             }
         }
 
-        void FinalizeDocument()
+        private void FinalizeDocument()
         {
-            FinalizeCurrentObject(@explicit: true);
+            FinalizeCurrentObject(true);
 
-            if (stateMachine.IsInObject)
+            if (_stateMachine.IsInObject)
             {
                 throw new InvalidOperationException("Inconsistent state - at end of file whilst inside an object.");
             }
 
-            foreach (var includedForMerge in stateMachine.ItemsForMerging)
+            foreach (var includedForMerge in _stateMachine.ItemsForMerging)
             {
                 DoIncludeAndMerge(includedForMerge);
             }
 
-            foreach (var includedDocument in stateMachine.ItemsForAppending)
+            foreach (var includedDocument in _stateMachine.ItemsForAppending)
             {
                 DoIncludeAndAppend(includedDocument);
             }
         }
 
-        void HandleCondition(string text)
+        private void HandleCondition(string text)
         {
-            if (stateMachine.Current != KV1TextReaderState.InObjectAfterValue)
+            if (_stateMachine.Current != Kv1TextReaderState.InObjectAfterValue)
             {
                 throw new InvalidDataException(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "Found conditional while in state {0}.",
-                        stateMachine.Current));
+                        _stateMachine.Current));
             }
 
-            if (!conditionEvaluator.Evalute(text))
+            if (!_conditionEvaluator.Evalute(text))
             {
-                stateMachine.SetDiscardCurrent();
+                _stateMachine.SetDiscardCurrent();
             }
         }
 
-        void DoIncludeAndMerge(string filePath)
+        private void DoIncludeAndMerge(string filePath)
         {
-            var mergeListener = listener.GetMergeListener();
+            var mergeListener = _listener.GetMergeListener();
 
             using (var stream = OpenFileForInclude(filePath))
-            using (var reader = new KV1TextReader(new StreamReader(stream), mergeListener, options))
+            using (var reader = new Kv1TextReader(new StreamReader(stream), mergeListener, _options))
             {
                 reader.ReadObject();
             }
         }
 
-        void DoIncludeAndAppend(string filePath)
+        private void DoIncludeAndAppend(string filePath)
         {
-            var appendListener = listener.GetAppendListener();
+            var appendListener = _listener.GetAppendListener();
 
             using (var stream = OpenFileForInclude(filePath))
-            using (var reader = new KV1TextReader(new StreamReader(stream), appendListener, options))
+            using (var reader = new Kv1TextReader(new StreamReader(stream), appendListener, _options))
             {
                 reader.ReadObject();
             }
         }
 
-        Stream OpenFileForInclude(string filePath)
+        private Stream OpenFileForInclude(string filePath)
         {
-            if (options.FileLoader == null)
+            if (_options.FileLoader == null)
             {
                 throw new KeyValueException("Inclusions requirer a FileLoader to be provided in KVSerializerOptions.");
             }
 
-            var stream = options.FileLoader.OpenFile(filePath);
+            var stream = _options.FileLoader.OpenFile(filePath);
             if (stream == null)
             {
                 throw new KeyValueException("IIncludedFileLoader returned null for included file path.");
@@ -267,13 +265,13 @@ namespace ValveKeyValue.Deserialization
             return stream;
         }
 
-        static KVValue ParseValue(string text)
+        private static KvValue ParseValue(string text)
         {
             // "0x" + 2 digits per byte. Long is 8 bytes, so s + 16 = 18.
             // Expressed this way for readability, rather than using a magic value.
-            const int HexStringLengthForUnsignedLong = 2 + (sizeof(long) * 2);
+            const int hexStringLengthForUnsignedLong = 2 + (sizeof(long) * 2);
 
-            if (text.Length == HexStringLengthForUnsignedLong && text.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            if (text.Length == hexStringLengthForUnsignedLong && text.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
                 var hexadecimalString = text.Substring(2);
                 var data = ParseHexStringAsByteArray(hexadecimalString);
@@ -284,30 +282,26 @@ namespace ValveKeyValue.Deserialization
                 }
 
                 var value = BitConverter.ToUInt64(data, 0);
-                return new KVObjectValue<ulong>(value, KVValueType.UInt64);
+                return new KvObjectValue<ulong>(value, KvValueType.UInt64);
             }
 
-            int intValue;
-            if (int.TryParse(text, out intValue))
+            if (int.TryParse(text, out var intValue))
             {
-                return new KVObjectValue<int>(intValue, KVValueType.Int32);
+                return new KvObjectValue<int>(intValue, KvValueType.Int32);
             }
 
-            const NumberStyles FloatingPointNumberStyles =
+            const NumberStyles floatingPointNumberStyles =
                 NumberStyles.AllowDecimalPoint |
                 NumberStyles.AllowExponent |
                 NumberStyles.AllowLeadingSign;
 
-            float floatValue;
-            if (float.TryParse(text, FloatingPointNumberStyles, CultureInfo.InvariantCulture, out floatValue))
-            {
-                return new KVObjectValue<float>(floatValue, KVValueType.FloatingPoint);
-            }
+            if (float.TryParse(text, floatingPointNumberStyles, CultureInfo.InvariantCulture, out var floatValue))
+                return new KvObjectValue<float>(floatValue, KvValueType.FloatingPoint);
 
-            return new KVObjectValue<string>(text, KVValueType.String);
+            return new KvObjectValue<string>(text, KvValueType.String);
         }
 
-        static byte[] ParseHexStringAsByteArray(string hexadecimalRepresentation)
+        private static byte[] ParseHexStringAsByteArray(string hexadecimalRepresentation)
         {
             Require.NotNull(hexadecimalRepresentation, nameof(hexadecimalRepresentation));
 

@@ -77,33 +77,33 @@ namespace ValveKeyValue.Test
                 0x08, // end document
             };
 
-            obj = KVSerializer.Create(KVSerializationFormat.KeyValues1Binary).Deserialize<TestObject>(data);
+            obj = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize<TestObject>(data);
         }
 
         class TestObject
         {
-            [KVProperty("key")]
+            [KvProperty("key")]
             public string StringValue { get; set; }
 
-            [KVProperty("key_utf8")]
+            [KvProperty("key_utf8")]
             public string StringUtf8Value { get; set; }
 
-            [KVProperty("int")]
+            [KvProperty("int")]
             public int TheIntegerValue { get; set; }
 
-            [KVProperty("flt")]
+            [KvProperty("flt")]
             public float TheFloatingMember { get; set; }
 
-            [KVProperty("col")]
+            [KvProperty("col")]
             public int Colour { get; set; }
 
-            [KVProperty("ptr")]
+            [KvProperty("ptr")]
             public int Pointer { get; set; }
 
-            [KVProperty("lng")]
+            [KvProperty("lng")]
             public ulong ULongValue { get; set; }
 
-            [KVProperty("i64")]
+            [KvProperty("i64")]
             public long LongValue { get; set; }
         }
     }

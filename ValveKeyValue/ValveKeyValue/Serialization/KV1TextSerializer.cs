@@ -5,25 +5,24 @@ using ValveKeyValue.Abstraction;
 
 namespace ValveKeyValue.Serialization
 {
-    sealed class KV1TextSerializer : IVisitationListener, IDisposable
+    internal sealed class Kv1TextSerializer : IVisitationListener
     {
-        public KV1TextSerializer(Stream stream, KVSerializerOptions options)
+        public Kv1TextSerializer(Stream stream, KvSerializerOptions options)
         {
             Require.NotNull(stream, nameof(stream));
             Require.NotNull(options, nameof(options));
 
-            this.options = options;
-            writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 1024, leaveOpen: true);
-            writer.NewLine = "\n";
+            _options = options;
+            _writer = new StreamWriter(stream, Encoding.UTF8, 1024, true) {NewLine = "\n"};
         }
 
-        readonly KVSerializerOptions options;
-        readonly TextWriter writer;
-        int indentation = 0;
+        private readonly KvSerializerOptions _options;
+        private readonly TextWriter _writer;
+        private int _indentation;
 
         public void Dispose()
         {
-            writer.Dispose();
+            _writer.Dispose();
         }
 
         public void OnObjectStart(string name)
@@ -32,81 +31,76 @@ namespace ValveKeyValue.Serialization
         public void OnObjectEnd()
             => WriteEndObject();
 
-        public void OnKeyValuePair(string name, KVValue value)
+        public void OnKeyValuePair(string name, KvValue value)
             => WriteKeyValuePair(name, value);
 
-        public void DiscardCurrentObject()
-        {
-            throw new NotSupportedException("Discard not supported when writing.");
-        }
-
-        void WriteStartObject(string name)
+        private void WriteStartObject(string name)
         {
             WriteIndentation();
             WriteText(name);
             WriteLine();
             WriteIndentation();
-            writer.Write('{');
-            indentation++;
+            _writer.Write('{');
+            _indentation++;
             WriteLine();
         }
 
-        void WriteEndObject()
+        private void WriteEndObject()
         {
-            indentation--;
+            _indentation--;
             WriteIndentation();
-            writer.Write('}');
-            writer.WriteLine();
+            _writer.Write('}');
+            _writer.WriteLine();
         }
 
-        void WriteKeyValuePair(string name, IConvertible value)
+        private void WriteKeyValuePair(string name, IConvertible value)
         {
             WriteIndentation();
             WriteText(name);
-            writer.Write('\t');
+            _writer.Write('\t');
             WriteText(value.ToString(null));
             WriteLine();
         }
 
-        void WriteIndentation()
+        private void WriteIndentation()
         {
-            if (indentation == 0)
+            if (_indentation == 0)
             {
                 return;
             }
 
-            var text = new string('\t', indentation);
-            writer.Write(text);
+            var text = new string('\t', _indentation);
+            _writer.Write(text);
         }
 
-        void WriteText(string text)
+        private void WriteText(string text)
         {
-            writer.Write('"');
+            _writer.Write('"');
 
             foreach (var @char in text)
             {
                 switch (@char)
                 {
                     case '"':
-                        writer.Write("\\\"");
+                        _writer.Write("\\\"");
                         break;
 
                     case '\\':
-                        writer.Write(options.HasEscapeSequences ? "\\\\" : "\\");
+                        _writer.Write(_options.HasEscapeSequences ? "\\\\" : "\\");
                         break;
 
                     default:
-                        writer.Write(@char);
+                        _writer.Write(@char);
                         break;
                 }
             }
 
-            writer.Write('"');
+            _writer.Write('"');
         }
 
-        void WriteLine()
+        private void WriteLine()
         {
-            writer.WriteLine();
+            _writer.WriteLine();
         }
     }
 }

@@ -89,12 +89,12 @@ namespace ValveKeyValue.Test
                 Throws.Exception.InstanceOf<KeyValueException>().With.InnerException.TypeOf<EndOfStreamException>());
         }
 
-        KVSerializer serializer;
+        KvSerializer serializer;
 
         [OneTimeSetUp]
         public void SetUpSerializer()
         {
-            serializer = KVSerializer.Create(KVSerializationFormat.KeyValues1Binary);
+            serializer = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary);
         }
     }
 }

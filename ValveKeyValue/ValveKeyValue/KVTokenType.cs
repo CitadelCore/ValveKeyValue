@@ -1,6 +1,6 @@
 ﻿namespace ValveKeyValue
 {
-    enum KVTokenType
+    internal enum KvTokenType
     {
         ObjectStart,
         ObjectEnd,

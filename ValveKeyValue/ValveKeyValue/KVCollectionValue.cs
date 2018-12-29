@@ -5,18 +5,17 @@ using System.Linq;
 
 namespace ValveKeyValue
 {
-    class KVCollectionValue : KVValue, IEnumerable<KVObject>
+    internal class KvCollectionValue : KvValue, IEnumerable<KvObject>
     {
-        public KVCollectionValue()
+        public KvCollectionValue()
         {
-            children = new List<KVObject>();
+            _children = new List<KvObject>();
         }
 
-        readonly List<KVObject> children;
+        private readonly List<KvObject> _children;
 
-        public override KVValueType ValueType => KVValueType.Collection;
-
-        public override KVValue this[string key]
+        public override KvValueType ValueType => KvValueType.Collection;
+        public override KvValue this[string key]
         {
             get
             {
@@ -25,36 +24,37 @@ namespace ValveKeyValue
             }
         }
 
-        public void Add(KVObject value)
+        public void Add(KvObject value)
         {
             Require.NotNull(value, nameof(value));
-            children.Add(value);
+            _children.Add(value);
         }
 
-        public void AddRange(IEnumerable<KVObject> values)
+        public void AddRange(IEnumerable<KvObject> values)
         {
-            Require.NotNull(values, nameof(values));
-            children.AddRange(values);
+            var enumerable = values.ToList();
+            Require.NotNull(enumerable, nameof(values));
+            _children.AddRange(enumerable);
         }
 
-        public KVObject Get(string name)
+        public KvObject Get(string name)
         {
             Require.NotNull(name, nameof(name));
-            return children.FirstOrDefault(c => c.Name == name);
+            return _children.FirstOrDefault(c => c.Name == name);
         }
 
-        public void Set(string name, KVValue value)
+        public void Set(string name, KvValue value)
         {
             Require.NotNull(name, nameof(name));
             Require.NotNull(value, nameof(value));
 
-            children.RemoveAll(kv => kv.Name == name);
-            children.Add(new KVObject(name, value));
+            _children.RemoveAll(kv => kv.Name == name);
+            _children.Add(new KvObject(name, value));
         }
 
         #region IEnumerable<KVObject>
 
-        public IEnumerator<KVObject> GetEnumerator() => children.GetEnumerator();
+        public IEnumerator<KvObject> GetEnumerator() => _children.GetEnumerator();
 
         #endregion
 
@@ -147,7 +147,7 @@ namespace ValveKeyValue
 
         #region IEnumerable
 
-        IEnumerator IEnumerable.GetEnumerator() => children.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _children.GetEnumerator();
 
         #endregion
 

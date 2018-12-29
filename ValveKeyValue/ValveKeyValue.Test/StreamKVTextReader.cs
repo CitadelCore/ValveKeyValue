@@ -2,19 +2,19 @@
 {
     sealed class StreamKVTextReader : IKVTextReader
     {
-        KVObject IKVTextReader.Read(string resourceName, KVSerializerOptions options)
+        KvObject IKVTextReader.Read(string resourceName, KvSerializerOptions options)
         {
             using (var stream = TestDataHelper.OpenResource(resourceName))
             {
-                return KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize(stream, options);
+                return KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream, options);
             }
         }
 
-        T IKVTextReader.Read<T>(string resourceName, KVSerializerOptions options)
+        T IKVTextReader.Read<T>(string resourceName, KvSerializerOptions options)
         {
             using (var stream = TestDataHelper.OpenResource(resourceName))
             {
-                return KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Deserialize<T>(stream, options);
+                return KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<T>(stream, options);
             }
         }
     }

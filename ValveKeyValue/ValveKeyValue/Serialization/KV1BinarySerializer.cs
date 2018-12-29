@@ -6,30 +6,30 @@ using ValveKeyValue.Abstraction;
 
 namespace ValveKeyValue.Serialization
 {
-    sealed class KV1BinarySerializer : IVisitationListener, IDisposable
+    internal sealed class Kv1BinarySerializer : IVisitationListener
     {
-        public KV1BinarySerializer(Stream stream, KVSerializerOptions options)
+        public Kv1BinarySerializer(Stream stream, KvSerializerOptions options)
         {
             Require.NotNull(stream, nameof(stream));
 
             _isVbkv = options.HasVbkvHeader;
             if (_isVbkv)
-                _terminator = KV1BinaryNodeType.EndVbkv;
+                _terminator = Kv1BinaryNodeType.EndVbkv;
 
-            writer = new BinaryWriter(new MemoryStream(), Encoding.UTF8);
+            _writer = new BinaryWriter(new MemoryStream(), Encoding.UTF8);
             _realWriter = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
         }
 
         private readonly bool _isVbkv;
-        private readonly KV1BinaryNodeType _terminator = KV1BinaryNodeType.End;
+        private readonly Kv1BinaryNodeType _terminator = Kv1BinaryNodeType.End;
         private readonly BinaryWriter _realWriter;
 
-        readonly BinaryWriter writer;
-        int objectDepth;
+        private readonly BinaryWriter _writer;
+        private int _objectDepth;
 
         public void Dispose()
         {
-            writer.Dispose();
+            _writer.Dispose();
             _realWriter.Dispose();
         }
 
@@ -38,7 +38,7 @@ namespace ValveKeyValue.Serialization
             // Writing the VBKV header is done in a slightly different way.
             // We use a secondary "wrapper" BinaryWriter that writes to a MemoryStream.
             // This is so we can calculate the CRC hash and write it before the KeyValues1 data.
-            var mem = (MemoryStream) writer.BaseStream;
+            var mem = (MemoryStream) _writer.BaseStream;
             mem.Seek(0, SeekOrigin.Begin);
             var array = mem.ToArray();
 
@@ -53,8 +53,8 @@ namespace ValveKeyValue.Serialization
 
         public void OnObjectStart(string name)
         {
-            objectDepth++;
-            Write(KV1BinaryNodeType.ChildObject);
+            _objectDepth++;
+            Write(Kv1BinaryNodeType.ChildObject);
             WriteNullTerminatedBytes(Encoding.UTF8.GetBytes(name));
         }
 
@@ -62,15 +62,15 @@ namespace ValveKeyValue.Serialization
         {
             Write(_terminator);
 
-            objectDepth--;
-            if (objectDepth != 0) return;
+            _objectDepth--;
+            if (_objectDepth != 0) return;
 
             Write(_terminator);
             if (!_isVbkv)
             {
                 // No VBKV data, so just copy the stream
-                writer.BaseStream.Seek(0, SeekOrigin.Begin);
-                writer.BaseStream.CopyTo(_realWriter.BaseStream);
+                _writer.BaseStream.Seek(0, SeekOrigin.Begin);
+                _writer.BaseStream.CopyTo(_realWriter.BaseStream);
             }
             else
             {
@@ -79,32 +79,32 @@ namespace ValveKeyValue.Serialization
             }
         }
 
-        public void OnKeyValuePair(string name, KVValue value)
+        public void OnKeyValuePair(string name, KvValue value)
         {
             Write(GetNodeType(value.ValueType));
             WriteNullTerminatedBytes(Encoding.UTF8.GetBytes(name));
 
             switch (value.ValueType)
             {
-                case KVValueType.FloatingPoint:
-                    writer.Write((float)value);
+                case KvValueType.FloatingPoint:
+                    _writer.Write((float)value);
                     break;
 
-                case KVValueType.Int32:
-                case KVValueType.Pointer:
-                    writer.Write((int)value);
+                case KvValueType.Int32:
+                case KvValueType.Pointer:
+                    _writer.Write((int)value);
                     break;
 
-                case KVValueType.String:
+                case KvValueType.String:
                     WriteNullTerminatedBytes(Encoding.UTF8.GetBytes((string)value));
                     break;
 
-                case KVValueType.UInt64:
-                    writer.Write((ulong)value);
+                case KvValueType.UInt64:
+                    _writer.Write((ulong)value);
                     break;
 
-                case KVValueType.Int64:
-                    writer.Write((long)value);
+                case KvValueType.Int64:
+                    _writer.Write((long)value);
                     break;
 
                 default:
@@ -112,39 +112,33 @@ namespace ValveKeyValue.Serialization
             }
         }
 
-        void Write(KV1BinaryNodeType nodeType)
+        private void Write(Kv1BinaryNodeType nodeType)
         {
-            writer.Write((byte)nodeType);
+            _writer.Write((byte)nodeType);
         }
 
-        void WriteNullTerminatedBytes(byte[] value)
+        private void WriteNullTerminatedBytes(byte[] value)
         {
-            writer.Write(value);
-            writer.Write((byte)0);
+            _writer.Write(value);
+            _writer.Write((byte)0);
         }
 
-        static KV1BinaryNodeType GetNodeType(KVValueType type)
+        private static Kv1BinaryNodeType GetNodeType(KvValueType type)
         {
             switch (type)
             {
-                case KVValueType.FloatingPoint:
-                    return KV1BinaryNodeType.Float32;
-
-                case KVValueType.Int32:
-                    return KV1BinaryNodeType.Int32;
-
-                case KVValueType.Pointer:
-                    return KV1BinaryNodeType.Pointer;
-
-                case KVValueType.String:
-                    return KV1BinaryNodeType.String;
-
-                case KVValueType.UInt64:
-                    return KV1BinaryNodeType.UInt64;
-
-                case KVValueType.Int64:
-                    return KV1BinaryNodeType.Int64;
-
+                case KvValueType.FloatingPoint:
+                    return Kv1BinaryNodeType.Float32;
+                case KvValueType.Int32:
+                    return Kv1BinaryNodeType.Int32;
+                case KvValueType.Pointer:
+                    return Kv1BinaryNodeType.Pointer;
+                case KvValueType.String:
+                    return Kv1BinaryNodeType.String;
+                case KvValueType.UInt64:
+                    return Kv1BinaryNodeType.UInt64;
+                case KvValueType.Int64:
+                    return Kv1BinaryNodeType.Int64;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported value type.");
             }

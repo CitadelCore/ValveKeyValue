@@ -1,16 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E8E36854-0D88-4026-923F-10684317591C}"
-	ProjectSection(SolutionItems) = preProject
-		ValveKeyValue.ruleset = ValveKeyValue.ruleset
-	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValveKeyValue", "ValveKeyValue\ValveKeyValue.csproj", "{776DC8F6-EC38-4529-900B-08562EDCF0F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValveKeyValue", "ValveKeyValue\ValveKeyValue.csproj", "{776DC8F6-EC38-4529-900B-08562EDCF0F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValveKeyValue.Test", "ValveKeyValue.Test\ValveKeyValue.Test.csproj", "{E3170459-D16B-428A-88BC-975F0C5DF9B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValveKeyValue.Test", "ValveKeyValue.Test\ValveKeyValue.Test.csproj", "{E3170459-D16B-428A-88BC-975F0C5DF9B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,5 +26,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4DAA2329-2779-4E37-A46F-6B271F279AAD}
 	EndGlobalSection
 EndGlobal

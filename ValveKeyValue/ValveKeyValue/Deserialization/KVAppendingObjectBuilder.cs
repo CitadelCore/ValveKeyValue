@@ -1,22 +1,21 @@
 ﻿namespace ValveKeyValue.Deserialization
 {
-    sealed class KVAppendingObjectBuilder : KVObjectBuilder
+    internal sealed class KvAppendingObjectBuilder : KvObjectBuilder
     {
-        public KVAppendingObjectBuilder(KVObjectBuilder originalBuilder)
+        public KvAppendingObjectBuilder(KvObjectBuilder originalBuilder)
         {
             Require.NotNull(originalBuilder, nameof(originalBuilder));
-
-            this.originalBuilder = originalBuilder;
+            _originalBuilder = originalBuilder;
         }
 
-        readonly KVObjectBuilder originalBuilder;
+        private readonly KvObjectBuilder _originalBuilder;
 
         protected override void FinalizeState()
         {
             base.FinalizeState();
 
             var stateEntry = StateStack.Peek();
-            var originalStateEntry = originalBuilder.StateStack.Peek();
+            var originalStateEntry = _originalBuilder.StateStack.Peek();
 
             foreach (var item in stateEntry.Items)
             {

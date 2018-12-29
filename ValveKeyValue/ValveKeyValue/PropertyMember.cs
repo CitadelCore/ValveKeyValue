@@ -3,33 +3,33 @@ using System.Reflection;
 
 namespace ValveKeyValue
 {
-    sealed class PropertyMember : IObjectMember
+    internal sealed class PropertyMember : IObjectMember
     {
         public PropertyMember(PropertyInfo propertyInfo, object @object)
         {
             Require.NotNull(propertyInfo, nameof(propertyInfo));
             Require.NotNull(@object, nameof(@object));
 
-            this.propertyInfo = propertyInfo;
-            this.@object = @object;
+            _propertyInfo = propertyInfo;
+            _object = @object;
         }
 
-        readonly PropertyInfo propertyInfo;
-        readonly object @object;
+        private readonly PropertyInfo _propertyInfo;
+        private readonly object _object;
 
         bool IObjectMember.IsExplicitName => PropertyAttribute != null;
 
         string IObjectMember.Name
-            => PropertyAttribute?.PropertyName ?? propertyInfo.Name;
+            => PropertyAttribute?.PropertyName ?? _propertyInfo.Name;
 
-        Type IObjectMember.MemberType => propertyInfo.PropertyType;
+        Type IObjectMember.MemberType => _propertyInfo.PropertyType;
 
         object IObjectMember.Value
         {
-            get { return propertyInfo.GetValue(@object); }
-            set { propertyInfo.SetValue(@object, value); }
+            get => _propertyInfo.GetValue(_object);
+            set => _propertyInfo.SetValue(_object, value);
         }
 
-        KVPropertyAttribute PropertyAttribute => propertyInfo.GetCustomAttribute<KVPropertyAttribute>();
+        private KvPropertyAttribute PropertyAttribute => _propertyInfo.GetCustomAttribute<KvPropertyAttribute>();
     }
 }

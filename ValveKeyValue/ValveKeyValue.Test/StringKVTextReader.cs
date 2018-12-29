@@ -4,18 +4,18 @@
     {
         public StringKVTextReader()
         {
-            serializer = KVSerializer.Create(KVSerializationFormat.KeyValues1Text);
+            serializer = KvSerializer.Create(KvSerializationFormat.KeyValues1Text);
         }
 
-        readonly KVSerializer serializer;
+        readonly KvSerializer serializer;
 
-        KVObject IKVTextReader.Read(string resourceName, KVSerializerOptions options)
+        KvObject IKVTextReader.Read(string resourceName, KvSerializerOptions options)
         {
             var text = TestDataHelper.ReadTextResource(resourceName);
             return serializer.Deserialize(text, options);
         }
 
-        T IKVTextReader.Read<T>(string resourceName, KVSerializerOptions options)
+        T IKVTextReader.Read<T>(string resourceName, KvSerializerOptions options)
         {
             var text = TestDataHelper.ReadTextResource(resourceName);
             return serializer.Deserialize<T>(text, options);

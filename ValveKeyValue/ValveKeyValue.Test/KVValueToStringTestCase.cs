@@ -7,16 +7,16 @@ namespace ValveKeyValue.Test
     class KVValueToStringTestCase
     {
         [TestCaseSource(nameof(ToStringTestCases))]
-        public string KVValueToStringIsSane(KVValue value) => value.ToString();
+        public string KVValueToStringIsSane(KvValue value) => value.ToString();
 
         public static IEnumerable ToStringTestCases
         {
             get
             {
-                yield return new TestCaseData(new KVObject("a", "blah").Value).Returns("blah");
-                yield return new TestCaseData(new KVObject("a", "yay").Value).Returns("yay");
-                yield return new TestCaseData(new KVObject("a", Enumerable.Empty<KVObject>()).Value).Returns("[Collection]").SetName("{m} - Empty Collection");
-                yield return new TestCaseData(new KVObject("a", new[] { new KVObject("boo", "aah") }).Value).Returns("[Collection]").SetName("{m} - Collection With Value");
+                yield return new TestCaseData(new KvObject("a", "blah").Value).Returns("blah");
+                yield return new TestCaseData(new KvObject("a", "yay").Value).Returns("yay");
+                yield return new TestCaseData(new KvObject("a", Enumerable.Empty<KvObject>()).Value).Returns("[Collection]").SetName("{m} - Empty Collection");
+                yield return new TestCaseData(new KvObject("a", new[] { new KvObject("boo", "aah") }).Value).Returns("[Collection]").SetName("{m} - Collection With Value");
             }
         }
     }
