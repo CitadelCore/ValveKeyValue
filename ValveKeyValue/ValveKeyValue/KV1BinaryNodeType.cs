@@ -12,5 +12,6 @@
         UInt64 = 7,
         End = 8,
         Int64 = 10,
+        EndVbkv = 11
     }
 }

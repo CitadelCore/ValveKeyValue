@@ -111,7 +111,7 @@ namespace ValveKeyValue
                     return new KV1TextReader(new StreamReader(stream), listener, options);
 
                 case KVSerializationFormat.KeyValues1Binary:
-                    return new KV1BinaryReader(stream, listener);
+                    return new KV1BinaryReader(stream, listener, options);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(format), format, "Invalid serialization format.");
@@ -129,7 +129,7 @@ namespace ValveKeyValue
                     return new KV1TextSerializer(stream, options);
 
                 case KVSerializationFormat.KeyValues1Binary:
-                    return new KV1BinarySerializer(stream);
+                    return new KV1BinarySerializer(stream, options);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(format), format, "Invalid serialization format.");

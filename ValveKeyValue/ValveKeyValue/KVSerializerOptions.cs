@@ -22,6 +22,12 @@
         public bool HasEscapeSequences { get; set; }
 
         /// <summary>
+        /// Whether the file uses the VBKV (Valve Binary KeyValues) format rather than the regular one.
+        /// This has a "VBKV" header and is terminated with 0x0B instead of 0x08.
+        /// </summary>
+        public bool HasVbkvHeader { get; set; }
+
+        /// <summary>
         /// Gets or sets a way to open any file referenced with <c>#include</c> or <c>#base</c>.
         /// </summary>
         public IIncludedFileLoader FileLoader { get; set; }

@@ -1,18 +1,28 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Force.Crc32;
 using ValveKeyValue.Abstraction;
 
 namespace ValveKeyValue.Serialization
 {
     sealed class KV1BinarySerializer : IVisitationListener, IDisposable
     {
-        public KV1BinarySerializer(Stream stream)
+        public KV1BinarySerializer(Stream stream, KVSerializerOptions options)
         {
             Require.NotNull(stream, nameof(stream));
 
-            writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            _isVbkv = options.HasVbkvHeader;
+            if (_isVbkv)
+                _terminator = KV1BinaryNodeType.EndVbkv;
+
+            writer = new BinaryWriter(new MemoryStream(), Encoding.UTF8);
+            _realWriter = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
         }
+
+        private readonly bool _isVbkv;
+        private readonly KV1BinaryNodeType _terminator = KV1BinaryNodeType.End;
+        private readonly BinaryWriter _realWriter;
 
         readonly BinaryWriter writer;
         int objectDepth;
@@ -20,6 +30,25 @@ namespace ValveKeyValue.Serialization
         public void Dispose()
         {
             writer.Dispose();
+            _realWriter.Dispose();
+        }
+
+        private void WriteVbkvHeader()
+        {
+            // Writing the VBKV header is done in a slightly different way.
+            // We use a secondary "wrapper" BinaryWriter that writes to a MemoryStream.
+            // This is so we can calculate the CRC hash and write it before the KeyValues1 data.
+            var mem = (MemoryStream) writer.BaseStream;
+            mem.Seek(0, SeekOrigin.Begin);
+            var array = mem.ToArray();
+
+            // Compute CRC32 of the array
+            var crc = Crc32Algorithm.Compute(array);
+
+            // Write to the real stream
+            _realWriter.Write("VBKV".ToCharArray());
+            _realWriter.Write(crc);
+            _realWriter.Write(array);
         }
 
         public void OnObjectStart(string name)
@@ -31,12 +60,22 @@ namespace ValveKeyValue.Serialization
 
         public void OnObjectEnd()
         {
-            Write(KV1BinaryNodeType.End);
+            Write(_terminator);
 
             objectDepth--;
-            if (objectDepth == 0)
+            if (objectDepth != 0) return;
+
+            Write(_terminator);
+            if (!_isVbkv)
             {
-                Write(KV1BinaryNodeType.End);
+                // No VBKV data, so just copy the stream
+                writer.BaseStream.Seek(0, SeekOrigin.Begin);
+                writer.BaseStream.CopyTo(_realWriter.BaseStream);
+            }
+            else
+            {
+                // VBKV, do more stuff
+                WriteVbkvHeader();
             }
         }
 
