@@ -214,14 +214,27 @@ namespace ValveKeyValue.Deserialization
             return sb.ToString();
         }
 
-        private string ReadUntilWhitespace()
+        private string ReadUntilWhitespaceOrBracket()
         {
             var sb = new StringBuilder();
 
             while (true)
             {
                 var next = Peek();
-                if (next == -1 || char.IsWhiteSpace((char)next))
+                if (next == -1)
+                    break;
+
+                // Break if we hit a bracket or a quotation mark.
+                // This avoids issues where a key is not properly spaced.
+                // TODO: write unit test for this.
+                var testChar = (char) next;
+                if (char.IsWhiteSpace(testChar) ||
+                    testChar == ObjectStart ||
+                    testChar == ObjectEnd)
+                    break;
+
+                // Un-escaped quotation mark? Break.
+                if (testChar == QuotationMark && sb[sb.Length - 1] != '\\')
                     break;
 
                 sb.Append(Next());
@@ -245,7 +258,7 @@ namespace ValveKeyValue.Deserialization
         private string ReadStringRaw()
         {
             SwallowWhitespace();
-            return Peek() == '"' ? ReadQuotedStringRaw() : ReadUntilWhitespace();
+            return Peek() == '"' ? ReadQuotedStringRaw() : ReadUntilWhitespaceOrBracket();
         }
 
         private string ReadQuotedStringRaw()
