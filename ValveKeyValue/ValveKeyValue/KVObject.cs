@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -95,11 +96,8 @@ namespace ValveKeyValue
 
         private KvCollectionValue GetCollectionValue()
         {
-            var collection = Value as KvCollectionValue;
-            if (collection == null)
-            {
+            if (!(Value is KvCollectionValue collection))
                 throw new InvalidOperationException($"This operation on a {nameof(KvObject)} can only be used when the value has children.");
-            }
 
             return collection;
         }
@@ -111,7 +109,7 @@ namespace ValveKeyValue
                 var description = new StringBuilder();
                 description.Append(Name);
                 description.Append(": ");
-                description.Append(Value.ToString());
+                description.Append(Value.ToString(CultureInfo.InvariantCulture));
 
                 return description.ToString();
             }

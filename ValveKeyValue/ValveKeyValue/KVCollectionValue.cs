@@ -124,9 +124,7 @@ namespace ValveKeyValue
              => ToString();
 
         public override object ToType(Type conversionType, IFormatProvider provider)
-        {
-            throw new NotSupportedException();
-        }
+            => ObjectCopier.MakeObjectCollection(conversionType, this);
 
         public override ushort ToUInt16(IFormatProvider provider)
         {

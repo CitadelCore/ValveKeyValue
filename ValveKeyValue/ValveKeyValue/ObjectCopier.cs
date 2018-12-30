@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -57,29 +58,45 @@ namespace ValveKeyValue
             }
         }
 
+        public static object MakeObjectCollection(Type type, KvCollectionValue keyValueCollection)
+            => MakeObjectCollection(type, keyValueCollection, new DefaultObjectReflector());
+
+        public static object MakeObjectCollection(Type type, KvCollectionValue keyValueCollection, IObjectReflector reflector)
+        {
+            Require.NotNull(keyValueCollection, nameof(keyValueCollection));
+            Require.NotNull(reflector, nameof(reflector));
+
+            // Trying to cast to an IDictionary, so we add the values of the KvCollectionValue to the type
+            if (typeof(IDictionary).IsAssignableFrom(type))
+            {
+                var dict = (IDictionary) FormatterServices.GetUninitializedObject(type);
+                foreach (var obj in keyValueCollection)
+                    dict.Add(obj.Name, obj.Value.ToType(dict.GetType().GetGenericArguments()[1], CultureInfo.CurrentCulture));
+                return dict;
+            }
+
+            var typedObject = FormatterServices.GetUninitializedObject(type);
+            CopyObjectCollection(keyValueCollection, typedObject, reflector);
+            return typedObject;
+        }
+
         public static KvObject FromObject<TObject>(TObject managedObject, string topLevelName)
             => FromObjectCore(managedObject, topLevelName, new DefaultObjectReflector(), new HashSet<object>());
 
         private static KvObject FromObjectCore<TObject>(TObject managedObject, string topLevelName, IObjectReflector reflector, HashSet<object> visitedObjects)
         {
             if (managedObject == null)
-            {
                 throw new ArgumentNullException(nameof(managedObject));
-            }
 
             Require.NotNull(topLevelName, nameof(topLevelName));
             Require.NotNull(reflector, nameof(reflector));
             Require.NotNull(visitedObjects, nameof(visitedObjects));
 
             if (!typeof(TObject).IsValueType && typeof(TObject) != typeof(string) && !visitedObjects.Add(managedObject))
-            {
                 throw new KeyValueException("Serialization failed - circular object reference detected.");
-            }
 
             if (typeof(IConvertible).IsAssignableFrom(typeof(TObject)))
-            {
-                  return new KvObject(topLevelName, (string)Convert.ChangeType(managedObject, typeof(string)));
-            }
+                return new KvObject(topLevelName, (string)Convert.ChangeType(managedObject, typeof(string)));
 
             var childObjects = new List<KvObject>();
 
@@ -108,10 +125,7 @@ namespace ValveKeyValue
             {
                 foreach (var member in reflector.GetMembers(managedObject).OrderBy(p => p.Name))
                 {
-                    if (!member.MemberType.IsValueType && member.Value is null)
-                    {
-                        continue;
-                    }
+                    if (!member.MemberType.IsValueType && member.Value is null) continue;
 
                     var name = member.Name;
                     if (!member.IsExplicitName && name.Length > 0 && char.IsUpper(name[0]))
@@ -157,8 +171,25 @@ namespace ValveKeyValue
             Require.NotNull(reflector, nameof(reflector));
 
             var members = reflector.GetMembers(obj).ToDictionary(m => m.Name, m => m, StringComparer.OrdinalIgnoreCase);
-
             foreach (var item in kv.Children)
+            {
+                if (!members.TryGetValue(item.Name, out var member))
+                    continue;
+                member.Value = MakeObject(member.MemberType, item, reflector);
+            }
+        }
+
+        public static void CopyObjectCollection(KvCollectionValue kv, object obj, IObjectReflector reflector)
+        {
+            Require.NotNull(kv, nameof(kv));
+
+            // Cannot use Require.NotNull here because TObject might be a struct.
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
+            Require.NotNull(reflector, nameof(reflector));
+            var members = reflector.GetMembers(obj).ToDictionary(m => m.Name, m => m, StringComparer.OrdinalIgnoreCase);
+            foreach (var item in kv)
             {
                 if (!members.TryGetValue(item.Name, out var member))
                     continue;
