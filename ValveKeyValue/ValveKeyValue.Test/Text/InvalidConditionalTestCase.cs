@@ -1,11 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class InvalidConditionalTestCase
+    internal class InvalidConditionalTestCase
     {
         [TestCase("$ABC | $DEF")]
         [TestCase("$ABC & $DEF")]

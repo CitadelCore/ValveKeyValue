@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E8E36854-0D88-4026-923F-10684317591C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValveKeyValue", "ValveKeyValue\ValveKeyValue.csproj", "{776DC8F6-EC38-4529-900B-08562EDCF0F7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValveKeyValue.Test", "ValveKeyValue.Test\ValveKeyValue.Test.csproj", "{E3170459-D16B-428A-88BC-975F0C5DF9B6}"

@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class SerializationTestCase
+    internal class SerializationTestCase
     {
         [Test]
         public void CreatesTextDocument()
@@ -37,9 +38,7 @@ namespace ValveKeyValue.Test
 
                 ms.Seek(0, SeekOrigin.Begin);
                 using (var reader = new StreamReader(ms))
-                {
                     text = reader.ReadToEnd();
-                }
             }
 
             var expected = TestDataHelper.ReadTextResource("Text.serialization_expected.vdf");

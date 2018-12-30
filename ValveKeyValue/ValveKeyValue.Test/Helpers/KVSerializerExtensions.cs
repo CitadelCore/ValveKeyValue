@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Helpers
 {
-    static class KVSerializerExtensions
+    internal static class KvSerializerExtensions
     {
         public static KvObject Deserialize(this KvSerializer serializer, byte[] data, KvSerializerOptions options = null)
         {

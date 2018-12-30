@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using NUnit.Framework;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Binary
 {
-    class BinaryObjectConsecutiveDeserializationTestCase
+    internal class BinaryObjectConsecutiveDeserializationTestCase
     {
         private FirstObject _firstObject;
         private SecondObject _secondObject;
@@ -49,13 +49,13 @@ namespace ValveKeyValue.Test
             }
         }
 
-        class FirstObject
+        private class FirstObject
         {
             [KvProperty("firstkey")]
             public string StringValue { get; set; }
         }
 
-        class SecondObject
+        private class SecondObject
         {
             [KvProperty("secondkey")]
             public string StringValue { get; set; }

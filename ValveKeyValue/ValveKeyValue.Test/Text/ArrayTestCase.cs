@@ -1,24 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
     [TestFixtureSource(typeof(TestFixtureSources), nameof(TestFixtureSources.SupportedEnumerableTypesForDeserialization))]
-    class ArrayTestCase<TEnumerable>
+    internal class ArrayTestCase<TEnumerable>
         where TEnumerable : IEnumerable<string>
     {
         [Test]
         public void IsNotNull()
         {
-            Assert.That(data, Is.Not.Null);
+            Assert.That(_data, Is.Not.Null);
         }
 
         [Test]
         public void NumbersIsNotNullOrEmpty()
         {
-            Assert.That(data.Numbers, Is.Not.Null);
-            Assert.That(data.Numbers.Any(), Is.True);
+            Assert.That(_data.Numbers, Is.Not.Null);
+            Assert.That(_data.Numbers.Any(), Is.True);
         }
 
         [TestCase(0, "zero")]
@@ -37,22 +38,23 @@ namespace ValveKeyValue.Test
         [TestCase(13, "thirteen")]
         public void NumbersListHasValue(int index, string expectedValue)
         {
-            var actualValue = data.Numbers.ToArray()[index];
+            var actualValue = _data.Numbers.ToArray()[index];
             Assert.That(actualValue, Is.EqualTo(expectedValue));
         }
 
-        SerializedType data;
+        private SerializedType _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             using (var stream = TestDataHelper.OpenResource("Text.list_of_values.vdf"))
             {
-                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<SerializedType>(stream);
+                _data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<SerializedType>(stream);
             }
         }
 
-        class SerializedType
+        // ReSharper disable once ClassNeverInstantiated.Local
+        private class SerializedType
         {
             public TEnumerable Numbers { get; set; }
         }

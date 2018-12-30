@@ -1,8 +1,9 @@
 ﻿using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class InvalidSyntaxTestCase
+    internal class InvalidSyntaxTestCase
     {
         [TestCase("empty")]
         [TestCase("quoteonly")]

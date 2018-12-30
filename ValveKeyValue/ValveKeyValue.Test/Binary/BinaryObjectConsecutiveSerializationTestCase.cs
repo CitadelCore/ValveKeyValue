@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using NUnit.Framework;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Binary
 {
-    class BinaryObjectConsecutiveSerializationTestCase
+    internal class BinaryObjectConsecutiveSerializationTestCase
     {
         [Test]
         public void SerializesToBinaryStructure()

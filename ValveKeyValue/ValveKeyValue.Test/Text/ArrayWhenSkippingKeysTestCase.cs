@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
     [TestFixtureSource(typeof(TestFixtureSources), nameof(TestFixtureSources.SupportedEnumerableTypesForDeserialization))]
-    class ArrayWhenSkippingKeysTestCase<TEnumerable>
+    internal class ArrayWhenSkippingKeysTestCase<TEnumerable>
         where TEnumerable : IEnumerable<string>
     {
         [Test]
@@ -21,7 +21,8 @@ namespace ValveKeyValue.Test
             }
         }
 
-        class SerializedType
+        // ReSharper disable once ClassNeverInstantiated.Local
+        private class SerializedType
         {
             public TEnumerable Numbers { get; set; }
         }

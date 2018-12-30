@@ -1,14 +1,15 @@
 ﻿using System;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class TypeGuessingTestCase
+    internal class TypeGuessingTestCase
     {
         [Test]
         public void IsNotNull()
         {
-            Assert.That(data, Is.Not.Null);
+            Assert.That(_data, Is.Not.Null);
         }
 
         [TestCase(KvValueType.String, TypeCode.String, "string", "123foo")]
@@ -20,7 +21,7 @@ namespace ValveKeyValue.Test
         [TestCase(KvValueType.Int32, TypeCode.Int32, "negint", -1234)]
         public void HasValueOfType<TExpected>(KvValueType expectedType, TypeCode expectedTypeCode, string key,  TExpected expectedValue)
         {
-            var actualValue = data[key];
+            var actualValue = _data[key];
 
             Assert.That(actualValue, Is.Not.Null);
             Assert.That(actualValue.ValueType, Is.EqualTo(expectedType), nameof(KvValueType));
@@ -30,15 +31,13 @@ namespace ValveKeyValue.Test
             Assert.That(typedActualValue, Is.EqualTo(expectedValue));
         }
 
-        KvObject data;
+        private KvObject _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             using (var stream = TestDataHelper.OpenResource("Text.type_guessing.vdf"))
-            {
-                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream);
-            }
+                _data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream);
         }
     }
 }

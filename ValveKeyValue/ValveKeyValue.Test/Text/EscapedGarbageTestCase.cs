@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class EscapedGarbageTestCase
+    internal class EscapedGarbageTestCase
     {
         [Test]
         public void ReadsRawValueWhenNotHasEscapeSequences()

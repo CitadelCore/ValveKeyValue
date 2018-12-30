@@ -1,46 +1,47 @@
 ﻿using NUnit.Framework;
+using ValveKeyValue.Test.Helpers;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Binary
 {
-    class BinaryObjectDeserializationTestCase
+    internal class BinaryObjectDeserializationTestCase
     {
         [Test]
         public void IsNotNull()
-            => Assert.That(obj, Is.Not.Null);
+            => Assert.That(_obj, Is.Not.Null);
 
         [Test]
         public void StringValue()
-            => Assert.That(obj.StringValue, Is.EqualTo("value"));
+            => Assert.That(_obj.StringValue, Is.EqualTo("value"));
 
         [Test]
         public void Utf8StringValue()
-            => Assert.That(obj.StringUtf8Value, Is.EqualTo("邪恶的战"));
+            => Assert.That(_obj.StringUtf8Value, Is.EqualTo("邪恶的战"));
 
         [Test]
         public void TheIntegerValue()
-            => Assert.That(obj.TheIntegerValue, Is.EqualTo(0x01020304));
+            => Assert.That(_obj.TheIntegerValue, Is.EqualTo(0x01020304));
 
         [Test]
         public void TheFloatingMember()
-            => Assert.That(obj.TheFloatingMember, Is.EqualTo(1234.5678f));
+            => Assert.That(_obj.TheFloatingMember, Is.EqualTo(1234.5678f));
 
         [Test]
         public void Colour()
-            => Assert.That(obj.Colour, Is.EqualTo(0x10203040));
+            => Assert.That(_obj.Colour, Is.EqualTo(0x10203040));
 
         [Test]
         public void Pointer()
-            => Assert.That(obj.Pointer, Is.EqualTo(0x11223344));
+            => Assert.That(_obj.Pointer, Is.EqualTo(0x11223344));
 
         [Test]
         public void ULongValue()
-            => Assert.That(obj.ULongValue, Is.EqualTo(0x1122334455667788u));
+            => Assert.That(_obj.ULongValue, Is.EqualTo(0x1122334455667788u));
 
         [Test]
         public void LongValue()
-            => Assert.That(obj.LongValue, Is.EqualTo(0x0102030405060708));
+            => Assert.That(_obj.LongValue, Is.EqualTo(0x0102030405060708));
 
-        TestObject obj;
+        private TestObject _obj;
 
         [OneTimeSetUp]
         public void SetUp()
@@ -77,10 +78,10 @@ namespace ValveKeyValue.Test
                 0x08, // end document
             };
 
-            obj = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize<TestObject>(data);
+            _obj = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize<TestObject>(data);
         }
 
-        class TestObject
+        private class TestObject
         {
             [KvProperty("key")]
             public string StringValue { get; set; }

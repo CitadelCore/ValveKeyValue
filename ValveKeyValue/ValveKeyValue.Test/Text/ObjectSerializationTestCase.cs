@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class ObjectSerializationTestCase
+    internal class ObjectSerializationTestCase
     {
         [Test]
         public void CreatesTextDocument()
@@ -42,15 +44,13 @@ namespace ValveKeyValue.Test
             Assert.That(text, Is.EqualTo(expected));
         }
 
-        class DataObject
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+        private class DataObject
         {
             public string Name { get; set; }
-
             public string Developer { get; set; }
-
             [KvProperty("description")]
             public string Summary { get; set; }
-
             [KvIgnore]
             public string ExtraData { get; set; }
         }

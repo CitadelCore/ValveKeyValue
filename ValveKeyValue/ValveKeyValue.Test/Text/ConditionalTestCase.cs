@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class ConditionalTestCase
+    internal class ConditionalTestCase
     {
         [Test]
         public void ReadsValueWhenConditionalEqual()
@@ -71,7 +72,7 @@ namespace ValveKeyValue.Test
             Assert.That((string)data["operating system"], Is.EqualTo("something else"));
         }
 
-        [TestCase(new object[] { new string[] { "X360" } }, ExpectedResult = "small", TestName = "ReadsValueFromComplexBracketedConditional([\"X360\"]) => \"small\"")]
+        [TestCase(new object[] { new[] { "X360" } }, ExpectedResult = "small", TestName = "ReadsValueFromComplexBracketedConditional([\"X360\"]) => \"small\"")]
         [TestCase(new object[] { new[] { "X360", "GERMAN" } }, ExpectedResult = "medium", TestName = "ReadsValueFromComplexBracketedConditional([\"X360\", \"GERMAN\"]) => \"medium\"")]
         [TestCase(new object[] { new[] { "X360", "FRENCH" } }, ExpectedResult = "medium", TestName = "ReadsValueFromComplexBracketedConditional([\"X360\", \"FRENCH\"]) => \"medium\"")]
         [TestCase(new object[] { new[] { "X360", "POLISH" } }, ExpectedResult = "large", TestName = "ReadsValueFromComplexBracketedConditional([\"X360\", \"POLISH\"]) => \"large\"")]
@@ -94,10 +95,10 @@ namespace ValveKeyValue.Test
             Assert.That((string)children[0].Value, Is.EqualTo("windows 32-bit"));
         }
 
-        static KvObject ParseResource(string name)
+        private static KvObject ParseResource(string name)
             => ParseResource(name, new string[0]);
 
-        static KvObject ParseResource(string name, string[] conditions)
+        private static KvObject ParseResource(string name, string[] conditions)
         {
             KvObject data;
             using (var stream = TestDataHelper.OpenResource(name))

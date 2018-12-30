@@ -3,23 +3,23 @@ using NUnit.Framework;
 
 namespace ValveKeyValue.Test
 {
-    class KVBasicObjectIndexerTestCase
+    internal class KvBasicObjectIndexerTestCase
     {
         [Test]
         public void IndexerOnValueNodeThrowsException()
         {
             Assert.That(
-                () => data["baz"],
+                () => _data["baz"],
                 Throws.Exception.InstanceOf<InvalidOperationException>()
-                .With.Message.EqualTo("This operation on a KVObject can only be used when the value has children."));
+                .With.Message.EqualTo("This operation on a KvObject can only be used when the value has children."));
         }
 
-        KvObject data;
+        private KvObject _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            data = new KvObject("foo", "bar");
+            _data = new KvObject("foo", "bar");
         }
     }
 }

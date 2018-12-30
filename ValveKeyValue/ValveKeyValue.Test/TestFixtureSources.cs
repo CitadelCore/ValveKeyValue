@@ -7,7 +7,7 @@ using NUnit.Framework.Internal;
 
 namespace ValveKeyValue.Test
 {
-    static class TestFixtureSources
+    internal static class TestFixtureSources
     {
         public static IEnumerable SupportedEnumerableTypesForDeserialization
         {
@@ -22,7 +22,7 @@ namespace ValveKeyValue.Test
             }
         }
 
-        static TestFixtureParameters CreateTestFixtureDataForGenericTest(Type genericType)
+        private static TestFixtureParameters CreateTestFixtureDataForGenericTest(Type genericType)
         {
             var data = new TestFixtureAttribute
             {

@@ -1,18 +1,19 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class KnownIssuesTestCase
+    internal class KnownIssuesTestCase
     {
         [Test]
         public void CanDeserializeValveResourceFormatSettings()
         {
-            VKVConfig config;
+            VkvConfig config;
 
             using (var stream = TestDataHelper.OpenResource("Text.vrf_settings_sample.vdf"))
             {
-                config = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<VKVConfig>(stream);
+                config = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<VkvConfig>(stream);
             }
 
             Assert.That(config, Is.Not.Null);
@@ -25,7 +26,8 @@ namespace ValveKeyValue.Test
             });
         }
 
-        class VKVConfig
+        // ReSharper disable once ClassNeverInstantiated.Local
+        private class VkvConfig
         {
             public List<string> GameSearchPaths { get; set; }
             public string BackgroundColor { get; set; }

@@ -1,35 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace ValveKeyValue.Test
 {
-    class KVObjectIndexerTestCase
+    internal class KvObjectIndexerTestCase
     {
         [TestCase("foo", ExpectedResult = "bar")]
         [TestCase("bar", ExpectedResult = "baz")]
         [TestCase("baz", ExpectedResult = "-")]
         [TestCase("foobar", ExpectedResult = null)]
-        public string IndexerReturnsChildValue(string key) => (string)data[key];
+        public string IndexerReturnsChildValue(string key) => (string)_data[key];
 
         [Test]
         public void IndexerOnValueNodeThrowsException()
         {
             Assert.That(
-                () => data["foo"]["bar"],
+                () => _data["foo"]["bar"],
                 Throws.Exception.InstanceOf<NotSupportedException>()
-                .With.Message.EqualTo("The indexer on a KVValue can only be used on a KVValue that has children."));
+                .With.Message.EqualTo("The indexer on a KvValue can only be used on a KvValue that has children."));
         }
 
-        KvObject data;
+        private KvObject _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            data = new KvObject(
+            _data = new KvObject(
                 "test data",
                 new[]
                 {

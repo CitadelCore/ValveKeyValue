@@ -2,10 +2,11 @@
 using System.IO;
 using System.Text;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class CircularObjectSerializationTestCase
+    internal class CircularObjectSerializationTestCase
     {
         [Test]
         public void ThrowsException()
@@ -58,14 +59,14 @@ namespace ValveKeyValue.Test
             Assert.That(text, Is.EqualTo(expected));
         }
 
-        class DataObject
+        private class DataObject
         {
             public string Name { get; set; }
 
             public DataObject Other { get; set; }
         }
 
-        public class DataObjectWithList
+        private class DataObjectWithList
         {
             public List<string> Strings { get; set; } = new List<string>();
             public List<int> Ints { get; set; } = new List<int>();

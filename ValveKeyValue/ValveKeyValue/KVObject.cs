@@ -93,7 +93,7 @@ namespace ValveKeyValue
         /// </summary>
         public IEnumerable<KvObject> Children => (Value as KvCollectionValue) ?? Enumerable.Empty<KvObject>();
 
-        KvCollectionValue GetCollectionValue()
+        private KvCollectionValue GetCollectionValue()
         {
             var collection = Value as KvCollectionValue;
             if (collection == null)
@@ -104,7 +104,7 @@ namespace ValveKeyValue
             return collection;
         }
 
-        string DebuggerDescription
+        private string DebuggerDescription
         {
             get
             {

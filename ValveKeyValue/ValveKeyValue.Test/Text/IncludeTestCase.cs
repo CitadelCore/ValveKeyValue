@@ -1,21 +1,22 @@
 ﻿using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class IncludeTestCase
+    internal class IncludeTestCase
     {
         [Test]
         public void IsNotNull()
         {
-            Assert.That(data, Is.Not.Null);
+            Assert.That(_data, Is.Not.Null);
         }
 
         [Test]
         public void HasThreeItems()
         {
-            Assert.That(data.Count(), Is.EqualTo(3));
+            Assert.That(_data.Count(), Is.EqualTo(3));
         }
 
         [TestCase("foo", "bar")]
@@ -23,11 +24,11 @@ namespace ValveKeyValue.Test
         [TestCase("baz", "nada")]
         public void HasKeyWithValue(string key, string expectedValue)
         {
-            var actualValue = (string)data[key];
+            var actualValue = (string)_data[key];
             Assert.That(actualValue, Is.EqualTo(expectedValue));
         }
 
-        KvObject data;
+        private KvObject _data;
 
         [OneTimeSetUp]
         public void SetUp()
@@ -35,12 +36,10 @@ namespace ValveKeyValue.Test
             var options = new KvSerializerOptions { FileLoader = new StubIncludedFileLoader() };
 
             using (var stream = TestDataHelper.OpenResource("Text.kv_with_include.vdf"))
-            {
-                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream, options);
-            }
+                _data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream, options);
         }
 
-        sealed class StubIncludedFileLoader : IIncludedFileLoader
+        private sealed class StubIncludedFileLoader : IIncludedFileLoader
         {
             Stream IIncludedFileLoader.OpenFile(string filePath)
             {

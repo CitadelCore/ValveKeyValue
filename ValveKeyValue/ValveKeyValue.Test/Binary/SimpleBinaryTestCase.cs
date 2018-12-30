@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
+using ValveKeyValue.Test.Helpers;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Binary
 {
-    class SimpleBinaryTestCase
+    internal class SimpleBinaryTestCase
     {
         [Test]
         public void IsNotNull()
-            => Assert.That(obj, Is.Not.Null);
+            => Assert.That(_obj, Is.Not.Null);
 
         [Test]
         public void HasName()
-            => Assert.That(obj.Name, Is.EqualTo("TestObject"));
+            => Assert.That(_obj.Name, Is.EqualTo("TestObject"));
 
         [Test]
         public void IsObjectWithChildren()
-            => Assert.That(obj.Value.ValueType, Is.EqualTo(KvValueType.Collection));
+            => Assert.That(_obj.Value.ValueType, Is.EqualTo(KvValueType.Collection));
 
         [TestCase(ExpectedResult = 7)]
         public int HasChildren()
-            => obj.Children.Count();
+            => _obj.Children.Count();
 
         [TestCase("key", "value", typeof(string))]
         [TestCase("int", 0x01020304, typeof(int))]
@@ -31,10 +32,10 @@ namespace ValveKeyValue.Test
         [TestCase("i64", 0x0102030405060708, typeof(long))]
         public void HasNamedChildWithValue(string name, object value, Type valueType)
         {
-            Assert.That(Convert.ChangeType(obj[name], valueType), Is.EqualTo(value));
+            Assert.That(Convert.ChangeType(_obj[name], valueType), Is.EqualTo(value));
         }
 
-        KvObject obj;
+        private KvObject _obj;
 
         [OneTimeSetUp]
         public void SetUp()
@@ -67,7 +68,7 @@ namespace ValveKeyValue.Test
                     0x08, // end object
                 0x08, // end document
             };
-            obj = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize(data);
+            _obj = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary).Deserialize(data);
         }
     }
 }

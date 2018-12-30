@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using ValveKeyValue.Test.Helpers;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Binary
 {
-    class TruncatedDataTestCase
+    internal class TruncatedDataTestCase
     {
         [Test]
         public void WhileReadingEmptyData()
@@ -11,7 +12,7 @@ namespace ValveKeyValue.Test
             var data = new byte[0];
 
             Assert.That(
-                () => serializer.Deserialize(data),
+                () => _serializer.Deserialize(data),
                 Throws.Exception.InstanceOf<KeyValueException>().With.InnerException.TypeOf<EndOfStreamException>());
         }
 
@@ -24,7 +25,7 @@ namespace ValveKeyValue.Test
             };
 
             Assert.That(
-                () => serializer.Deserialize(data),
+                () => _serializer.Deserialize(data),
                 Throws.Exception.InstanceOf<KeyValueException>().With.InnerException.TypeOf<EndOfStreamException>());
         }
 
@@ -38,7 +39,7 @@ namespace ValveKeyValue.Test
             };
 
             Assert.That(
-                () => serializer.Deserialize(data),
+                () => _serializer.Deserialize(data),
                 Throws.Exception.InstanceOf<KeyValueException>().With.InnerException.TypeOf<EndOfStreamException>());
         }
 
@@ -52,7 +53,7 @@ namespace ValveKeyValue.Test
             };
 
             Assert.That(
-                () => serializer.Deserialize(data),
+                () => _serializer.Deserialize(data),
                 Throws.Exception.InstanceOf<KeyValueException>().With.InnerException.TypeOf<EndOfStreamException>());
         }
 
@@ -68,7 +69,7 @@ namespace ValveKeyValue.Test
             };
 
             Assert.That(
-                () => serializer.Deserialize(data),
+                () => _serializer.Deserialize(data),
                 Throws.Exception.InstanceOf<KeyValueException>().With.InnerException.TypeOf<EndOfStreamException>());
         }
 
@@ -85,16 +86,16 @@ namespace ValveKeyValue.Test
             };
 
             Assert.That(
-                () => serializer.Deserialize(data),
+                () => _serializer.Deserialize(data),
                 Throws.Exception.InstanceOf<KeyValueException>().With.InnerException.TypeOf<EndOfStreamException>());
         }
 
-        KvSerializer serializer;
+        private KvSerializer _serializer;
 
         [OneTimeSetUp]
         public void SetUpSerializer()
         {
-            serializer = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary);
+            _serializer = KvSerializer.Create(KvSerializationFormat.KeyValues1Binary);
         }
     }
 }

@@ -1,26 +1,27 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class DictionaryPropertyTestCase
+    internal class DictionaryPropertyTestCase
     {
         [Test]
         public void IsNotNull()
         {
-            Assert.That(data, Is.Not.Null);
+            Assert.That(_data, Is.Not.Null);
         }
 
         [Test]
         public void NumbersIsNotNullEmpty()
         {
-            Assert.That(data.Numbers, Is.Not.Null.Or.Empty);
+            Assert.That(_data.Numbers, Is.Not.Null.Or.Empty);
         }
 
         [Test]
         public void HasNumbers()
         {
-            Assert.That(data.Numbers, Has.Count.EqualTo(14));
+            Assert.That(_data.Numbers, Has.Count.EqualTo(14));
         }
 
         [TestCase(0, "zero")]
@@ -39,21 +40,20 @@ namespace ValveKeyValue.Test
         [TestCase(13, "thirteen")]
         public void NumbersHasValue(int key, string value)
         {
-            Assert.That(data.Numbers[key], Is.EqualTo(value));
+            Assert.That(_data.Numbers[key], Is.EqualTo(value));
         }
 
-        ContainerClass data;
+        private ContainerClass _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             using (var stream = TestDataHelper.OpenResource("Text.list_of_values.vdf"))
-            {
-                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<ContainerClass>(stream);
-            }
+                _data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<ContainerClass>(stream);
         }
 
-        class ContainerClass
+        // ReSharper disable once ClassNeverInstantiated.Local
+        private class ContainerClass
         {
             public Dictionary<int, string> Numbers { get; set; }
         }

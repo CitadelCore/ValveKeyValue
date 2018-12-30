@@ -2,9 +2,9 @@
 using System.Text;
 using NUnit.Framework;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class NewLinesTestCase
+    internal class NewLinesTestCase
     {
         [TestCase("very\ngreat\nlines")]
         [TestCase(@"very\ngreat\nlines")]
@@ -22,7 +22,7 @@ namespace ValveKeyValue.Test
             Assert.That(text, Does.Contain(value));
         }
 
-        string PerformNewLineTest(string value, bool hasEscapeSequences)
+        private static string PerformNewLineTest(string value, bool hasEscapeSequences)
         {
             KvObject convertedKv;
             var kv = new KvObject("newLineTestCase", value);

@@ -1,9 +1,10 @@
 ﻿using System;
 using NUnit.Framework;
+using ValveKeyValue.Test.Helpers;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Binary
 {
-    class OutOfRangeNodeTypeTestCase
+    internal class OutOfRangeNodeTypeTestCase
     {
         [Test]
         public void ThrowsKeyValueException()

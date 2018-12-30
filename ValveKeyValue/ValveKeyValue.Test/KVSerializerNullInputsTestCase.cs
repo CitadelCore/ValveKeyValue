@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace ValveKeyValue.Test
 {
-    class KVSerializerNullInputsTestCase
+    internal class KvSerializerNullInputsTestCase
     {
         [TestCaseSource(nameof(Formats))]
         public void DeserializeWithNullStream(KvSerializationFormat format)
@@ -15,6 +15,6 @@ namespace ValveKeyValue.Test
                 .With.Property(nameof(ArgumentNullException.ParamName)).EqualTo("stream"));
         }
 
-        public static IEnumerable Formats => Enum.GetValues(typeof(KvSerializationFormat));
+        private static IEnumerable Formats => Enum.GetValues(typeof(KvSerializationFormat));
     }
 }

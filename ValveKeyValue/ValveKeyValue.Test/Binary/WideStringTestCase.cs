@@ -1,9 +1,10 @@
 ﻿using System;
 using NUnit.Framework;
+using ValveKeyValue.Test.Helpers;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Binary
 {
-    class WideStringTestCase
+    internal class WideStringTestCase
     {
         [Test]
         public void DeserializationThrowsException()

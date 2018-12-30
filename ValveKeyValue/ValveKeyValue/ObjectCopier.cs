@@ -166,7 +166,7 @@ namespace ValveKeyValue
             }
         }
 
-        static bool IsArray(KvObject obj, out KvValue[] values)
+        private static bool IsArray(KvObject obj, out KvValue[] values)
         {
             values = null;
 

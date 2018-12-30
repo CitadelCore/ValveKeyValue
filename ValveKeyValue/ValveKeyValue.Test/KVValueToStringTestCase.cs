@@ -1,16 +1,18 @@
 ﻿using System.Collections;
+using System.Globalization;
 using System.Linq;
 using NUnit.Framework;
 
 namespace ValveKeyValue.Test
 {
-    class KVValueToStringTestCase
+    internal class KvValueToStringTestCase
     {
         [TestCaseSource(nameof(ToStringTestCases))]
-        public string KVValueToStringIsSane(KvValue value) => value.ToString();
+        public string KvValueToStringIsSane(KvValue value) => value.ToString(CultureInfo.InvariantCulture);
 
-        public static IEnumerable ToStringTestCases
+        private static IEnumerable ToStringTestCases
         {
+            // ReSharper disable once UnusedMember.Local
             get
             {
                 yield return new TestCaseData(new KvObject("a", "blah").Value).Returns("blah");

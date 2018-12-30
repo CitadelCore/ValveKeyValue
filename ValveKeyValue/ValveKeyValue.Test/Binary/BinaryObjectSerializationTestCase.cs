@@ -2,9 +2,9 @@
 using System.IO;
 using NUnit.Framework;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Binary
 {
-    class BinaryObjectSerializationTestCase
+    internal class BinaryObjectSerializationTestCase
     {
         [Test]
         public void SerializesToBinaryStructure()

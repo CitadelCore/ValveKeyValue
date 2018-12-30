@@ -1,45 +1,48 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using ValveKeyValue.Test.Helpers;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class LookupTestCase
+    internal class LookupTestCase
     {
         [Test]
         public void IsNotNullOrEmpty()
         {
-            Assert.That(data, Is.Not.Null.Or.Empty);
+            Assert.That(_data, Is.Not.Null.Or.Empty);
         }
 
         [Test]
         public void LookupIsNotNull()
         {
-            Assert.That(data.FooLookup, Is.Not.Null);
+            Assert.That(_data.FooLookup, Is.Not.Null);
         }
 
         [Test]
         public void LookupHasTwoItems()
         {
-            Assert.That(data.FooLookup, Has.Count.EqualTo(2));
+            Assert.That(_data.FooLookup, Has.Count.EqualTo(2));
         }
 
         [TestCase("Foo", new string[] { "I am Foo." })]
         [TestCase("Bar", new string[] { "First Bar", "Second Bar", "Third Bar" })]
         public void LookupItems(string key, string[] expectedValues)
         {
-            var lookupValues = data.FooLookup[key].ToArray();
+            var lookupValues = _data.FooLookup[key].ToArray();
             Assert.That(lookupValues, Is.EquivalentTo(expectedValues));
         }
 
-        ContainerClass data;
+        private ContainerClass _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<ContainerClass>(TestDataHelper.ReadTextResource("Text.duplicate_keys_object.vdf"));
+            _data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<ContainerClass>(TestDataHelper.ReadTextResource("Text.duplicate_keys_object.vdf"));
         }
 
-        class ContainerClass
+        // ReSharper disable once ClassNeverInstantiated.Local
+        private class ContainerClass
         {
             public ILookup<string, string> FooLookup { get; set; }
         }

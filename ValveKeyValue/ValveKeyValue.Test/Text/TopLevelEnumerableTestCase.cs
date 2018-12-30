@@ -1,23 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
     [TestFixtureSource(typeof(TestFixtureSources), nameof(TestFixtureSources.SupportedEnumerableTypesForDeserialization))]
-    class TopLevelEnumerableTestCase<TEnumerable>
+    internal class TopLevelEnumerableTestCase<TEnumerable>
         where TEnumerable : IEnumerable<string>
     {
         [Test]
         public void IsNotNull()
         {
-            Assert.That(data, Is.Not.Null);
+            Assert.That(_data, Is.Not.Null);
         }
 
         [Test]
         public void IsNotEmpty()
         {
-            Assert.That(data.Any(), Is.True);
+            Assert.That(_data.Any(), Is.True);
         }
 
         [TestCase(0, "zero")]
@@ -36,19 +37,17 @@ namespace ValveKeyValue.Test
         [TestCase(13, "thirteen")]
         public void HasValue(int index, string expectedValue)
         {
-            var actualValue = data.ToArray()[index];
+            var actualValue = _data.ToArray()[index];
             Assert.That(actualValue, Is.EqualTo(expectedValue));
         }
 
-        IEnumerable<string> data;
+        private IEnumerable<string> _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             using (var stream = TestDataHelper.OpenResource("Text.top_level_list_of_values.vdf"))
-            {
-                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<TEnumerable>(stream);
-            }
+                _data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<TEnumerable>(stream);
         }
     }
 }

@@ -1,50 +1,50 @@
-﻿using NUnit.Framework;
+﻿using System.Diagnostics.CodeAnalysis;
+using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class ObjectDeserializationMixedCaseTestCase
+    internal class ObjectDeserializationMixedCaseTestCase
     {
         [Test]
         public void IsNotNull()
         {
-            Assert.That(person, Is.Not.Null);
+            Assert.That(_person, Is.Not.Null);
         }
 
         [Test]
         public void FirstName()
         {
-            Assert.That(person.FirstName, Is.EqualTo("Bob"));
+            Assert.That(_person.FirstName, Is.EqualTo("Bob"));
         }
 
         [Test]
         public void LastName()
         {
-            Assert.That(person.LastName, Is.EqualTo("Builder"));
+            Assert.That(_person.LastName, Is.EqualTo("Builder"));
         }
 
         [Test]
         public void CanFixIt()
         {
-            Assert.That(person.CanFixIt, Is.True);
+            Assert.That(_person.CanFixIt, Is.True);
         }
 
-        Person person;
+        private Person _person;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             using (var stream = TestDataHelper.OpenResource("Text.object_person_mixed_case.vdf"))
-            {
-                person = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<Person>(stream);
-            }
+                _person = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<Person>(stream);
         }
 
-        class Person
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
+        private class Person
         {
             public string FirstName { get; set; }
-
             public string LastName { get; set; }
-
             public bool CanFixIt { get; set; }
         }
     }

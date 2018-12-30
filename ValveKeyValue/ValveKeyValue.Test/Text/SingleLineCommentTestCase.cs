@@ -1,8 +1,9 @@
 ﻿using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class SingleLineCommentTestCase
+    internal class SingleLineCommentTestCase
     {
         [TestCase("comment_singleline")]
         [TestCase("comment_singleline_wholeline")]
@@ -11,9 +12,7 @@ namespace ValveKeyValue.Test
         public void SingleLineComment(string resourceName)
         {
             using (var stream = TestDataHelper.OpenResource("Text." + resourceName + ".vdf"))
-            {
                 Assert.That(() => KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream), Throws.Nothing);
-            }
         }
     }
 }

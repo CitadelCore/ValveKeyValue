@@ -1,24 +1,27 @@
-﻿namespace ValveKeyValue.Test
+﻿using ValveKeyValue.Test.Helpers;
+using ValveKeyValue.Test.Test_Data;
+
+namespace ValveKeyValue.Test
 {
-    sealed class StringKVTextReader : IKVTextReader
+    internal sealed class StringKvTextReader : IKvTextReader
     {
-        public StringKVTextReader()
+        public StringKvTextReader()
         {
-            serializer = KvSerializer.Create(KvSerializationFormat.KeyValues1Text);
+            _serializer = KvSerializer.Create(KvSerializationFormat.KeyValues1Text);
         }
 
-        readonly KvSerializer serializer;
+        private readonly KvSerializer _serializer;
 
-        KvObject IKVTextReader.Read(string resourceName, KvSerializerOptions options)
+        KvObject IKvTextReader.Read(string resourceName, KvSerializerOptions options)
         {
             var text = TestDataHelper.ReadTextResource(resourceName);
-            return serializer.Deserialize(text, options);
+            return _serializer.Deserialize(text, options);
         }
 
-        T IKVTextReader.Read<T>(string resourceName, KvSerializerOptions options)
+        T IKvTextReader.Read<T>(string resourceName, KvSerializerOptions options)
         {
             var text = TestDataHelper.ReadTextResource(resourceName);
-            return serializer.Deserialize<T>(text, options);
+            return _serializer.Deserialize<T>(text, options);
         }
     }
 }

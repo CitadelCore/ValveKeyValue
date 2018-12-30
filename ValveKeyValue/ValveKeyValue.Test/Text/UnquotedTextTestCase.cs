@@ -1,41 +1,40 @@
 ﻿using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    class UnquotedTextTestCase
+    internal class UnquotedTextTestCase
     {
         [Test]
         public void IsNotNull()
         {
-            Assert.That(data, Is.Not.Null);
+            Assert.That(_data, Is.Not.Null);
         }
 
         [Test]
         public void Name()
         {
-            Assert.That(data.Name, Is.EqualTo("TestDocument"));
+            Assert.That(_data.Name, Is.EqualTo("TestDocument"));
         }
 
         [Test]
         public void QuotedChildWithEdgeCaseValue()
         {
-            Assert.That((string)data["QuotedChild"], Is.EqualTo(@"edge\ncase\""haha\\"""));
+            Assert.That((string)_data["QuotedChild"], Is.EqualTo(@"edge\ncase\""haha\\"""));
         }
 
         [TestCase("Key1", ExpectedResult = "Value1")]
         [TestCase("Key2", ExpectedResult = "Value2")]
         [TestCase("Key3", ExpectedResult = "Value3")]
-        public string UnquotedChildValue(string key) => (string)data["UnquotedChild"][key];
+        public string UnquotedChildValue(string key) => (string)_data["UnquotedChild"][key];
 
-        KvObject data;
+        private KvObject _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
             using (var stream = TestDataHelper.OpenResource("Text.unquoted_document.vdf"))
-            {
-                data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream);
-            }
+                _data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize(stream);
         }
     }
 }

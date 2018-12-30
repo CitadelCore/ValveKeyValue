@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace ValveKeyValue.Test
 {
-    class KVObjectCastTestCase
+    internal class KvObjectCastTestCase
     {
         [TestCase("1", true)]
         [TestCase("01", true)]
@@ -217,8 +217,9 @@ namespace ValveKeyValue.Test
             Assert.That(() => (ulong)kv.Value, Throws.Exception.TypeOf<FormatException>().Or.TypeOf<OverflowException>());
         }
 
-        static IEnumerable CommonFailures
+        private static IEnumerable CommonFailures
         {
+            // ReSharper disable once UnusedMember.Local
             get
             {
                 yield return string.Empty;

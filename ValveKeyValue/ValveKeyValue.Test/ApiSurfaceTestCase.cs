@@ -4,10 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using NUnit.Framework;
+using ValveKeyValue.Test.Test_Data;
 
 namespace ValveKeyValue.Test
 {
-    class ApiSurfaceTestCase
+    internal class ApiSurfaceTestCase
     {
         [Test]
         public void ApiSurfaceIsWellKnown()
@@ -18,7 +19,7 @@ namespace ValveKeyValue.Test
             Assert.That(actual, Is.EqualTo(expected), "This may indicate a breaking change.");
         }
 
-        static string GenerateApiSurface(Assembly assembly)
+        private static string GenerateApiSurface(Assembly assembly)
         {
             var sb = new StringBuilder();
 
@@ -35,7 +36,7 @@ namespace ValveKeyValue.Test
             return sb.ToString();
         }
 
-        static void GenerateTypeApiSurface(StringBuilder sb, Type type)
+        private static void GenerateTypeApiSurface(StringBuilder sb, Type type)
         {
             var typeInfo = type.GetTypeInfo();
 
@@ -98,24 +99,10 @@ namespace ValveKeyValue.Test
 
                 sb.Append("    ");
 
-                if (method.IsPublic)
-                {
-                    sb.Append("public");
-                }
-                else
-                {
-                    sb.Append("protected");
-                }
+                sb.Append(method.IsPublic ? "public" : "protected");
 
-                if (IsHidingMember(method))
-                {
-                    sb.Append(" new");
-                }
-
-                if (method.IsStatic)
-                {
-                    sb.Append(" static");
-                }
+                if (IsHidingMember(method)) sb.Append(" new");
+                if (method.IsStatic) sb.Append(" static");
 
                 sb.Append(' ');
                 sb.Append(GetTypeAsString(method.ReturnType));
@@ -130,61 +117,34 @@ namespace ValveKeyValue.Test
                 }
 
                 sb.Append('(');
-
                 sb.Append(string.Join(", ", method.GetParameters().Select(GetParameterAsString)));
-
                 sb.Append(");\n");
             }
 
             sb.Append("}\n\n");
         }
 
-        static bool IsHidingMember(MethodInfo method)
+        private static bool IsHidingMember(MethodInfo method)
         {
             var baseType = method.DeclaringType.GetTypeInfo().BaseType;
-            if (baseType == null)
-            {
-                return false;
-            }
+            if (baseType == null) return false;
 
             var baseMethod = baseType.GetMethod(method.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (baseMethod == null)
-            {
-                return false;
-            }
-
-            if (baseMethod.DeclaringType == method.DeclaringType)
-            {
-                return false;
-            }
+            if (baseMethod == null) return false;
+            if (baseMethod.DeclaringType == method.DeclaringType) return false;
 
             var methodDefinition = method.GetBaseDefinition();
             var baseMethodDefinition = baseMethod.GetBaseDefinition();
-
-            if (methodDefinition.DeclaringType == baseMethodDefinition.DeclaringType)
-            {
-                return false;
-            }
+            if (methodDefinition.DeclaringType == baseMethodDefinition.DeclaringType) return false;
 
             var methodParameters = method.GetParameters();
             var baseMethodParameters = baseMethod.GetParameters();
-            if (methodParameters.Length != baseMethodParameters.Length)
-            {
-                return false;
-            }
+            if (methodParameters.Length != baseMethodParameters.Length) return false;
 
-            for (int i = 0; i < methodParameters.Length; i++)
-            {
-                if (methodParameters[i].ParameterType != baseMethodParameters[i].ParameterType)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return !methodParameters.Where((t, i) => t.ParameterType != baseMethodParameters[i].ParameterType).Any();
         }
 
-        static string GetTypeAsString(Type type)
+        private static string GetTypeAsString(Type type)
         {
             if (type.IsArray)
             {
@@ -278,7 +238,7 @@ namespace ValveKeyValue.Test
             return sb.ToString();
         }
 
-        static string GetParameterAsString(ParameterInfo parameter)
+        private static string GetParameterAsString(ParameterInfo parameter)
         {
             var sb = new StringBuilder();
 

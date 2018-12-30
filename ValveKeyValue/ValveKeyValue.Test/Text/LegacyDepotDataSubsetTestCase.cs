@@ -2,61 +2,62 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace ValveKeyValue.Test
+namespace ValveKeyValue.Test.Text
 {
-    [TestFixture(typeof(StreamKVTextReader))]
-    [TestFixture(typeof(StringKVTextReader))]
-    class LegacyDepotDataSubsetTestCase<TReader>
-        where TReader : IKVTextReader, new()
+    [TestFixture(typeof(StreamKvTextReader))]
+    [TestFixture(typeof(StringKvTextReader))]
+    internal class LegacyDepotDataSubsetTestCase<TReader>
+        where TReader : IKvTextReader, new()
     {
         [Test]
         public void IsNotNull()
         {
-            Assert.That(data, Is.Not.Null);
+            Assert.That(_data, Is.Not.Null);
         }
 
         [Test]
         public void Name()
         {
-            Assert.That(data.Name, Is.EqualTo("depots"));
+            Assert.That(_data.Name, Is.EqualTo("depots"));
         }
 
         [Test]
         public void HasFourItems()
         {
-            Assert.That(data.Children.Count(), Is.EqualTo(4));
+            Assert.That(_data.Children.Count(), Is.EqualTo(4));
         }
 
         [TestCaseSource(nameof(ItemsTestCaseData))]
         public void HasItems(string key, string expectedValue)
         {
-            var value = data[key];
+            var value = _data[key];
             Assert.That((string)value, Is.EqualTo(expectedValue));
         }
 
         [TestCaseSource(nameof(ItemsTestCaseData))]
         public void HasItemWithValueCast(string key, string expectedValue)
         {
-            var value = data[key];
+            var value = _data[key];
             Assert.That((string)value, Is.EqualTo(expectedValue));
         }
 
         [TestCaseSource(nameof(GarbageItemsTestCaseData))]
         public void DoesNotHaveGarbageItems(string key)
         {
-            var value = data[key];
+            var value = _data[key];
             Assert.That(value, Is.Null);
         }
 
         [TestCaseSource(nameof(GarbageItemsTestCaseData))]
         public void DoesNotHaveGarbageWithValueCast(string key)
         {
-            var value = data[key];
+            var value = _data[key];
             Assert.That((string)value, Is.Null);
         }
 
-        static IEnumerable ItemsTestCaseData
+        private static IEnumerable ItemsTestCaseData
         {
+            // ReSharper disable once UnusedMember.Local
             get
             {
                 yield return new TestCaseData("0", "A10D0BCD94CE6105D0E2256FE06B2B22");
@@ -66,8 +67,9 @@ namespace ValveKeyValue.Test
             }
         }
 
-        static IEnumerable GarbageItemsTestCaseData
+        private static IEnumerable GarbageItemsTestCaseData
         {
+            // ReSharper disable once UnusedMember.Local
             get
             {
                 yield return "2";
@@ -77,12 +79,12 @@ namespace ValveKeyValue.Test
             }
         }
 
-        KvObject data;
+        private KvObject _data;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            data = new TReader().Read("Text.legacydepotdata_subset.vdf");
+            _data = new TReader().Read("Text.legacydepotdata_subset.vdf");
         }
     }
 }
