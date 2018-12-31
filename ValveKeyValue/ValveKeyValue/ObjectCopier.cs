@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace ValveKeyValue
 {
@@ -16,10 +17,10 @@ namespace ValveKeyValue
         public static TObject MakeObject<TObject>(KvObject keyValueObject)
             => MakeObject<TObject>(keyValueObject, new DefaultObjectReflector());
 
-        public static object MakeObject(Type objectType, KvObject keyValueObject, IObjectReflector reflector)
-            => InvokeGeneric(nameof(MakeObject), objectType, new object[] { keyValueObject, reflector });
+        public static object MakeObject(KvObject keyValueObject, Type objectType, IObjectReflector reflector, IObjectMember objectMember = null)
+            => InvokeGeneric(nameof(MakeObject), objectType, new object[] {keyValueObject, reflector, objectMember});
 
-        public static TObject MakeObject<TObject>(KvObject keyValueObject, IObjectReflector reflector)
+        public static TObject MakeObject<TObject>(KvObject keyValueObject, IObjectReflector reflector, IObjectMember objectMember = null)
         {
             Require.NotNull(keyValueObject, nameof(keyValueObject));
             Require.NotNull(reflector, nameof(reflector));
@@ -52,6 +53,19 @@ namespace ValveKeyValue
             {
                 return (TObject)Convert.ChangeType(keyValueObject.Value, typeof(TObject));
             }
+            else if (IsConstructibleEnumerableType(typeof(TObject)))
+            {
+                Require.NotNull(objectMember, nameof(objectMember));
+                if (objectMember?.CollectionType != KvCollectionType.CommaSeparated)
+                    throw new InvalidOperationException("Cannot deserialise string object values to anything but comma separated arrays.");
+
+                // Remove whitespace and split the string
+                var str = ((string)Convert.ChangeType(keyValueObject.Value, typeof(string))).Trim().Split(',').Cast<object>().ToArray();
+                if (!ConstructTypedEnumerable(typeof(TObject), str, out var enumerable))
+                    throw new InvalidOperationException("Unable to construct enumerable.");
+
+                return (TObject) enumerable;
+            }
             else
             {
                 throw new NotSupportedException(typeof(TObject).Name);
@@ -83,7 +97,7 @@ namespace ValveKeyValue
         public static KvObject FromObject<TObject>(TObject managedObject, string topLevelName)
             => FromObjectCore(managedObject, topLevelName, new DefaultObjectReflector(), new HashSet<object>());
 
-        private static KvObject FromObjectCore<TObject>(TObject managedObject, string topLevelName, IObjectReflector reflector, HashSet<object> visitedObjects)
+        private static KvObject FromObjectCore<TObject>(TObject managedObject, string topLevelName, IObjectReflector reflector, HashSet<object> visitedObjects, IObjectMember objectMember = null)
         {
             if (managedObject == null)
                 throw new ArgumentNullException(nameof(managedObject));
@@ -112,13 +126,31 @@ namespace ValveKeyValue
             }
             else if (typeof(TObject).IsArray || typeof(IEnumerable).IsAssignableFrom(typeof(TObject)))
             {
-                var counter = 0;
-                foreach (var child in (IEnumerable)managedObject)
-                {
-                    var childKvObject = CopyObject(child, counter.ToString(), reflector, visitedObjects);
-                    childObjects.Add(childKvObject);
+                var collectionType = objectMember?.CollectionType ?? KvCollectionType.Default;
 
-                    counter++;
+                switch (collectionType)
+                {
+                    case KvCollectionType.ValueList:
+                        var counter = 0;
+                        foreach (var child in (IEnumerable) managedObject)
+                        {
+                            var childKvObject = CopyObject(child, counter.ToString(), reflector, visitedObjects);
+                            childObjects.Add(childKvObject);
+
+                            counter++;
+                        }
+                        break;
+                    case KvCollectionType.CommaSeparated:
+                        var sb = new StringBuilder();
+                        foreach (var child in (IEnumerable) managedObject)
+                        {
+                            var str = Convert.ChangeType(child, typeof(string));
+                            sb.Append(str + ",");
+                        }
+
+                        return new KvObject(topLevelName, sb.ToString().TrimEnd(','));
+                    default:
+                        throw new NotSupportedException("Unsupported KvCollectionType for serialisation.");
                 }
             }
             else
@@ -129,9 +161,7 @@ namespace ValveKeyValue
 
                     var name = member.Name;
                     if (!member.IsExplicitName && name.Length > 0 && char.IsUpper(name[0]))
-                    {
                         name = char.ToLower(name[0]) + name.Substring(1);
-                    }
 
                     childObjects.Add(typeof(IConvertible).IsAssignableFrom(member.MemberType)
                         ? new KvObject(name, (string) Convert.ChangeType(member.Value, typeof(string)))
@@ -149,7 +179,7 @@ namespace ValveKeyValue
                 var keyValueRepresentation = (KvObject)typeof(ObjectCopier)
                     .GetMethod(nameof(FromObjectCore), BindingFlags.NonPublic | BindingFlags.Static)
                     ?.MakeGenericMethod(@object.GetType())
-                    .Invoke(null, new[] { @object, name, reflector, visitedObjects });
+                    .Invoke(null, new[] { @object, name, reflector, visitedObjects, null });
 
                 return keyValueRepresentation;
             }
@@ -170,12 +200,14 @@ namespace ValveKeyValue
 
             Require.NotNull(reflector, nameof(reflector));
 
+            // We call MakeObject on all members here
+            // TODO: how do we pass KvCollectionType to MakeObject??
             var members = reflector.GetMembers(obj).ToDictionary(m => m.Name, m => m, StringComparer.OrdinalIgnoreCase);
             foreach (var item in kv.Children)
             {
                 if (!members.TryGetValue(item.Name, out var member))
                     continue;
-                member.Value = MakeObject(member.MemberType, item, reflector);
+                member.Value = MakeObject(item, member.MemberType, reflector, member);
             }
         }
 
@@ -193,7 +225,7 @@ namespace ValveKeyValue
             {
                 if (!members.TryGetValue(item.Name, out var member))
                     continue;
-                member.Value = MakeObject(member.MemberType, item, reflector);
+                member.Value = MakeObject(item, member.MemberType, reflector, member);
             }
         }
 
@@ -262,9 +294,7 @@ namespace ValveKeyValue
                 var itemArray = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), values.Length);
 
                 for (var i = 0; i < itemArray.Length; i++)
-                {
                     itemArray.SetValue(Convert.ChangeType(values[i], elementType), i);
-                }
 
                 listObject = itemArray;
             }

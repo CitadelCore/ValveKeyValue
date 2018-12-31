@@ -6,4 +6,6 @@ For the offical ValveKeyValue, see https://github.com/SteamDatabase/ValveKeyValu
 Differences:
 - Different code style and refactorings
 - Support for VBKV (Valve Binary KeyValues)
-- Support for deserialising KvCollectionValue to an object
+- Support for deserialising KvCollectionValue to a class and back
+- Support for deserialising comma separated arrays and back
+- Support for compacted brackets and quotation marks which handle escaped quotations properly

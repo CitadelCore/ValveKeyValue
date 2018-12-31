@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ValveKeyValue
+namespace ValveKeyValue.Attributes
 {
     /// <inheritdoc />
     /// <summary>

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using ValveKeyValue.Attributes;
 using ValveKeyValue.Test.Helpers;
 
 namespace ValveKeyValue.Test.Binary

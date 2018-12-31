@@ -29,17 +29,24 @@ public class ValveKeyValue.KeyValueException
     public string ToString();
 }
 
-public sealed class ValveKeyValue.KvIgnoreAttribute
+public sealed enum ValveKeyValue.KvCollectionType
 {
+    Default = 0;
+    ValueList = 0;
+    CommaSeparated = 1;
+
+    public int CompareTo(object target);
     public bool Equals(object obj);
     protected void Finalize();
-    public object get_TypeId();
     public int GetHashCode();
     public Type GetType();
-    public bool IsDefaultAttribute();
-    public bool Match(object obj);
+    public TypeCode GetTypeCode();
+    public bool HasFlag(Enum flag);
     protected object MemberwiseClone();
     public string ToString();
+    public string ToString(string format, IFormatProvider provider);
+    public string ToString(string format);
+    public string ToString(IFormatProvider provider);
 }
 
 public class ValveKeyValue.KvObject
@@ -56,20 +63,6 @@ public class ValveKeyValue.KvObject
     public Type GetType();
     protected object MemberwiseClone();
     public void set_Item(string key, ValveKeyValue.KvValue value);
-    public string ToString();
-}
-
-public sealed class ValveKeyValue.KvPropertyAttribute
-{
-    public bool Equals(object obj);
-    protected void Finalize();
-    public string get_PropertyName();
-    public object get_TypeId();
-    public int GetHashCode();
-    public Type GetType();
-    public bool IsDefaultAttribute();
-    public bool Match(object obj);
-    protected object MemberwiseClone();
     public string ToString();
 }
 
@@ -197,5 +190,34 @@ public sealed enum ValveKeyValue.KvValueType
     public string ToString(string format, IFormatProvider provider);
     public string ToString(string format);
     public string ToString(IFormatProvider provider);
+}
+
+public sealed class ValveKeyValue.Attributes.KvIgnoreAttribute
+{
+    public bool Equals(object obj);
+    protected void Finalize();
+    public object get_TypeId();
+    public int GetHashCode();
+    public Type GetType();
+    public bool IsDefaultAttribute();
+    public bool Match(object obj);
+    protected object MemberwiseClone();
+    public string ToString();
+}
+
+public sealed class ValveKeyValue.Attributes.KvPropertyAttribute
+{
+    public bool Equals(object obj);
+    protected void Finalize();
+    public ValveKeyValue.KvCollectionType get_ArrayType();
+    public string get_PropertyName();
+    public object get_TypeId();
+    public int GetHashCode();
+    public Type GetType();
+    public bool IsDefaultAttribute();
+    public bool Match(object obj);
+    protected object MemberwiseClone();
+    public void set_ArrayType(ValveKeyValue.KvCollectionType value);
+    public string ToString();
 }
 

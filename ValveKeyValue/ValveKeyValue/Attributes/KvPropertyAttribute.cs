@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ValveKeyValue
+namespace ValveKeyValue.Attributes
 {
     /// <inheritdoc />
     /// <summary>
@@ -10,14 +10,9 @@ namespace ValveKeyValue
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class KvPropertyAttribute : Attribute
     {
-        /// <inheritdoc />
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:ValveKeyValue.KvPropertyAttribute" /> class.
-        /// </summary>
-        /// <param name="propertyName">The name of the property as it appears in KeyValues serialized data.</param>
+        public KvPropertyAttribute() { }
         public KvPropertyAttribute(string propertyName)
         {
-            Require.NotNull(propertyName, nameof(propertyName));
             PropertyName = propertyName;
         }
 
@@ -25,5 +20,10 @@ namespace ValveKeyValue
         /// Gets the name of the property as it appears in KeyValues serialized data.
         /// </summary>
         public string PropertyName { get; }
+
+        /// <summary>
+        /// Gets or sets the array deserialisation type of this property.
+        /// </summary>
+        public KvCollectionType ArrayType { get; set; }
     }
 }

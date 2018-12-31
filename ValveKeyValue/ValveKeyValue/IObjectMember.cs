@@ -6,6 +6,7 @@ namespace ValveKeyValue
     {
         bool IsExplicitName { get; }
         string Name { get; }
+        KvCollectionType CollectionType { get; }
         Type MemberType { get; }
         object Value { get; set; }
     }

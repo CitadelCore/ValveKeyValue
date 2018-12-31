@@ -38,9 +38,7 @@ namespace ValveKeyValue
             var builder = new KvObjectBuilder();
 
             using (var reader = MakeReader(stream, builder, options ?? KvSerializerOptions.DefaultOptions))
-            {
                 reader.ReadObject();
-            }
 
             return builder.GetObject();
         }
@@ -89,9 +87,7 @@ namespace ValveKeyValue
             Require.NotNull(stream, nameof(stream));
 
             if (data == null)
-            {
                 throw new ArgumentNullException(nameof(data));
-            }
 
             Require.NotNull(name, nameof(name));
 

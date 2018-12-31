@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using ValveKeyValue.Attributes;
 
 namespace ValveKeyValue
 {
@@ -17,10 +18,13 @@ namespace ValveKeyValue
         private readonly PropertyInfo _propertyInfo;
         private readonly object _object;
 
-        bool IObjectMember.IsExplicitName => PropertyAttribute != null;
+        bool IObjectMember.IsExplicitName => PropertyAttribute?.PropertyName != null;
 
         string IObjectMember.Name
             => PropertyAttribute?.PropertyName ?? _propertyInfo.Name;
+
+        KvCollectionType IObjectMember.CollectionType 
+            => PropertyAttribute?.ArrayType ?? KvCollectionType.Default;
 
         Type IObjectMember.MemberType => _propertyInfo.PropertyType;
 

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using NUnit.Framework;
+using ValveKeyValue.Attributes;
 using ValveKeyValue.Test.Test_Data;
 
 namespace ValveKeyValue.Test.Text
