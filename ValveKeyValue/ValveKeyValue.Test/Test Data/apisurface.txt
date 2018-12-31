@@ -33,7 +33,7 @@ public sealed enum ValveKeyValue.KvCollectionType
 {
     Default = 0;
     ValueList = 0;
-    CommaSeparated = 1;
+    CharSeparated = 1;
 
     public int CompareTo(object target);
     public bool Equals(object obj);

@@ -24,6 +24,11 @@ namespace ValveKeyValue.Attributes
         /// <summary>
         /// Gets or sets the array deserialisation type of this property.
         /// </summary>
-        public KvCollectionType ArrayType { get; set; }
+        public KvCollectionType CollectionType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the separator to use when the collection type is <see cref="KvCollectionType.CharSeparated"/>.
+        /// </summary>
+        public char CollectionTypeSeparator { get; set; } = ',';
     }
 }

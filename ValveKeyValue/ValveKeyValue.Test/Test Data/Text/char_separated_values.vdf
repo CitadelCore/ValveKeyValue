@@ -1,0 +1,5 @@
+﻿"test case"
+{
+	"CommaSeparated"		"1, 2, 3, 4, 5"
+	"WhitespaceSeparated"	"1 2 3 4 5"
+}

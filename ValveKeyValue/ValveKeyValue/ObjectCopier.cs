@@ -56,11 +56,15 @@ namespace ValveKeyValue
             else if (IsConstructibleEnumerableType(typeof(TObject)))
             {
                 Require.NotNull(objectMember, nameof(objectMember));
-                if (objectMember?.CollectionType != KvCollectionType.CommaSeparated)
-                    throw new InvalidOperationException("Cannot deserialise string object values to anything but comma separated arrays.");
+                if (objectMember?.CollectionType != KvCollectionType.CharSeparated)
+                    throw new InvalidOperationException("Cannot deserialise string object values to anything but char separated arrays.");
 
                 // Remove whitespace and split the string
-                var str = ((string)Convert.ChangeType(keyValueObject.Value, typeof(string))).Trim().Split(',').Cast<object>().ToArray();
+                var str = ((string)Convert.ChangeType(keyValueObject.Value, typeof(string)))
+                    .Trim()
+                    .Split(objectMember.CollectionTypeSeparator)
+                    //.Select(s => s.Trim())
+                    .Cast<object>().ToArray();
                 if (!ConstructTypedEnumerable(typeof(TObject), str, out var enumerable))
                     throw new InvalidOperationException("Unable to construct enumerable.");
 
@@ -140,15 +144,18 @@ namespace ValveKeyValue
                             counter++;
                         }
                         break;
-                    case KvCollectionType.CommaSeparated:
+                    case KvCollectionType.CharSeparated:
+                        if (objectMember == null) throw new InvalidOperationException();
+
                         var sb = new StringBuilder();
                         foreach (var child in (IEnumerable) managedObject)
                         {
                             var str = Convert.ChangeType(child, typeof(string));
-                            sb.Append(str + ",");
+                            sb.Append(str);
+                            sb.Append(objectMember.CollectionTypeSeparator);
                         }
 
-                        return new KvObject(topLevelName, sb.ToString().TrimEnd(','));
+                        return new KvObject(topLevelName, sb.ToString().TrimEnd(objectMember.CollectionTypeSeparator));
                     default:
                         throw new NotSupportedException("Unsupported KvCollectionType for serialisation.");
                 }
@@ -201,7 +208,6 @@ namespace ValveKeyValue
             Require.NotNull(reflector, nameof(reflector));
 
             // We call MakeObject on all members here
-            // TODO: how do we pass KvCollectionType to MakeObject??
             var members = reflector.GetMembers(obj).ToDictionary(m => m.Name, m => m, StringComparer.OrdinalIgnoreCase);
             foreach (var item in kv.Children)
             {

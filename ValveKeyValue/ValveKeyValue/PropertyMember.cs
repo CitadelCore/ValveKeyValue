@@ -24,7 +24,10 @@ namespace ValveKeyValue
             => PropertyAttribute?.PropertyName ?? _propertyInfo.Name;
 
         KvCollectionType IObjectMember.CollectionType 
-            => PropertyAttribute?.ArrayType ?? KvCollectionType.Default;
+            => PropertyAttribute?.CollectionType ?? KvCollectionType.Default;
+
+        char IObjectMember.CollectionTypeSeparator
+            => PropertyAttribute?.CollectionTypeSeparator ?? ',';
 
         Type IObjectMember.MemberType => _propertyInfo.PropertyType;
 

@@ -7,7 +7,7 @@ using ValveKeyValue.Test.Test_Data;
 
 namespace ValveKeyValue.Test.Text
 {
-    public class CommaSeparatedValueTestCase
+    public class CharSeparatedValueTestCase
     {
         [Test]
         public void IsNotNull()
@@ -18,7 +18,7 @@ namespace ValveKeyValue.Test.Text
         [OneTimeSetUp]
         public void SetUp()
         {
-            using (var stream = TestDataHelper.OpenResource("Text.comma_separated_values.vdf"))
+            using (var stream = TestDataHelper.OpenResource("Text.char_separated_values.vdf"))
                 _data = KvSerializer.Create(KvSerializationFormat.KeyValues1Text).Deserialize<SerializedType>(stream);
         }
 
@@ -27,8 +27,11 @@ namespace ValveKeyValue.Test.Text
         // ReSharper disable once ClassNeverInstantiated.Local
         private class SerializedType
         {
-            [KvProperty(ArrayType = KvCollectionType.CommaSeparated)]
-            public int[] Numbers { get; set; }
+            [KvProperty(CollectionType = KvCollectionType.CharSeparated, CollectionTypeSeparator = ',')]
+            public int[] CommaSeparated { get; set; }
+
+            [KvProperty(CollectionType = KvCollectionType.CharSeparated, CollectionTypeSeparator = ' ')]
+            public int[] WhitespaceSeparated { get; set; }
         }
     }
 }

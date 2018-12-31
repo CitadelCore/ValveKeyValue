@@ -10,7 +10,7 @@ namespace ValveKeyValue
         /// Comma separated values.
         /// </summary>
         ValueList,
-        CommaSeparated,
+        CharSeparated,
         Default = ValueList
     }
 }
